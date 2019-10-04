@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+from fontTools.ttLib import TTFont
+import z3
+import random
+import networkx
+import io
+
+
+def dump_charstring(indent, charstring):
+    index = 0
+    while True:
+        token, isOperator, index = charstring.getToken(index)
+        if token is None:
+            break
+        if isOperator:
+            print(f'{indent}[0x{index:x}] {token}')
+        else:
+            print(f'{indent}[0x{index:x}] push {token}')
+
+
+xormagic = [0x1C, 0x2, 0x8, 0x74, 0x95, 0x0A0, 0x57, 0x1F, 0x63, 0x0B5, 0x4F, 0x61, 0x28, 0x3E, 0x47, 0x32, 0x0C4, 0x0E, 0x5D, 0x54, 0x72, 0x0B4, 0x0B3, 0x9F, 0x0D5, 0x0A8, 0x44, 0x58, 0x7, 0x79, 0x5, 0x0C3, 0x7, 0x35, 0x49, 0x1A, 0x15, 0x3, 0x0D4, 0x0DE, 0x3F, 0x72, 0x75, 0x4B, 0x33, 0x0A, 0x7, 0x9E, 0x4E, 0x65]
+assert(len(xormagic) == 50)
+
+
+
+def ite(c, x, y):
+    if c is True:
+        return x
+    elif c is False:
+        return y
+    else:
+        return z3.If(c, x, y)
+
+
+def sim(indent, decompiler, prog, s, t, is_symbolic, **kwargs):
+    index = 0
+    magic = []
+    while True:
+        token, isOperator, index = prog.getToken(index)
+        if token is None:
+            break
+        if isOperator:
+            if not is_symbolic:
+                print(f'{indent}[{index:x}] op: {token}, stack: {s}, transient: {t}')
+            if token == 'put':
+                i = s.pop()
+                val = s.pop()
+                t[i] = val
+            elif token == 'get':
+                i = s.pop()
+                s.append(t[i])
+            elif token == 'add':
+                num2 = s.pop()
+                num1 = s.pop()
+                s.append(num1 + num2)
+            elif token == 'sub':
+                num2 = s.pop()
+                num1 = s.pop()
+                s.append(num1 - num2)
+            elif token == 'eq':
+                num2 = s.pop()
+                num1 = s.pop()
+                s.append(ite(num1 == num2, 1, 0))
+            elif token == 'not':
+                num1 = s.pop()
+                s.append(ite(num1 == 0, 1, 0))
+            elif token == 'callsubr':
+                subr = s.pop() + decompiler.localBias
+                if is_symbolic:
+                    s = z3.Solver()
+                    s.add(subr == 9)
+                    results = []
+                    while str(s.check()) == 'sat':
+                        m = s.model()
+                        results.append(m[z3.Int('t0')].as_long())
+                        s.add(z3.Int('t0') != results[-1])
+                    return results
+                if subr == 11:
+                    g = kwargs['g']
+                    p = networkx.shortest_path(g, (t[0], t[1]), (41, 40))
+                    if len(p) == 1:
+                        choice = 4
+                    else:
+                        print(f'{indent}STEP {p[:2]}')
+                        if p[1][0] == p[0][0] + 1:
+                            choice = 4  # t0++
+                        elif p[1][1] == p[0][1] + 1:
+                            choice = 5  # t1++
+                        elif p[1][0] == p[0][0] - 1:
+                            choice = 6  # t0--
+                        else:
+                            assert(p[1][1] == p[0][1] - 1)
+                            choice = 7  # t1--
+                    s[-1] = (choice - t[2]) % 4
+                    magic.append(s[-1])
+                if subr == 8:
+                    print(f'{indent}WIN {magic}')
+                    s = ''
+                    for i in range(0, len(magic), 4):
+                        s += chr(xormagic[i // 4] ^ ((magic[i] << 6) | (magic[i + 1] << 4) | (magic[i + 2] << 2) | magic[i + 3]))
+                    print(s)
+                elif subr == 9:
+                    print(f'{indent}LOSE {magic}')
+                else:
+                    print(f'{indent}CALL {subr}')
+                    sim(indent + '    ', decompiler, decompiler.localSubrs[subr], s, t, is_symbolic, **kwargs)
+            elif token == 'index':
+                i = s.pop()
+                s.append(s[-1 - i])
+            elif token == 'ifelse':
+                v2 = s.pop()
+                v1 = s.pop()
+                s2 = s.pop()
+                s1 = s.pop()
+                s.append(ite(v1 <= v2, s1, s2))
+            elif token == 'return' or token == 'endchar':
+                break
+            elif token == 'roll':
+                j = s.pop()
+                n = s.pop()
+                assert(j > 0)
+                values = s[-n:]
+                values = values[-j:] + values[:-j]
+                s[-n:] = values
+            else:
+                raise Exception(token)
+        else:
+            s.append(token)
+
+
+exe = open('badtype.exe', 'rb').read()
+pos = exe.index(b'OTTO')
+fontdata = exe[pos:pos + 11548]
+fontdata = fontdata.replace(b'\x1C\x41\x41', b'\x1C\x00\x00')
+font = TTFont(io.BytesIO(fontdata))
+data = font.getTableData('CFF ')
+cff = font['CFF ']
+cff.decompile(data, font)
+cff = cff.cff
+td = cff.topDictIndex[0]
+bans = {}
+for csi, cs in enumerate(td.CharStrings.values()):
+    print(f'CharStrings[{csi}]')
+    dump_charstring('    ', cs)
+    decompiler = cs.decompilerClass(getattr(cs.private, "Subrs", []), cs.globalSubrs, cs.private)
+    if csi == 1:
+        for i in range(58):
+            print(f'    localSubrs[{i}]')
+            dump_charstring('        ', decompiler.localSubrs[i])
+        for i in range(16, 57):
+            print(f'    localSubrs[{i}] SYMBOLIC')
+            results = sim('        ', decompiler, decompiler.localSubrs[i], [], {0: z3.Int('t0')}, True)
+            print(f'        T1:{i - 16} T0:{results}')
+            bans[i - 16] = set(results)
+            g = networkx.DiGraph()
+            for t0 in range(43):
+                for t1 in range(41):
+                    g.add_node((t0, t1))
+            for t0 in range(43):
+                for t1 in range(41):
+                    if t0 not in bans.get(t1, []):
+                        if t0 != 0:
+                            g.add_edge((t0 - 1, t1), (t0, t1))
+                        if t0 != 42:
+                            g.add_edge((t0 + 1, t1), (t0, t1))
+                        if t1 != 0:
+                            g.add_edge((t0, t1 - 1), (t0, t1))
+                        if t1 != 40:
+                            g.add_edge((t0, t1 + 1), (t0, t1))
+        sim('    ', decompiler, cs, [], {}, False, bans=bans, g=g)
