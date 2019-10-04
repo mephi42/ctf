@@ -10,7 +10,7 @@ Usage: badtype.exe <flag>
 Let's give it something random:
 
 ```
-> wine badtype.exe DrgnS{x}
+> badtype.exe DrgnS{x}
 ```
 
 A window with the text
@@ -26,7 +26,7 @@ appears. Let's have a look in IDA:
 .text:000000014000252F                 jz      short length_ok
 ```
 
-It wants an argument, that's what we figured.
+It wants a single argument, that's what we already figured.
 
 ```
 .text:000000014000254A length_ok:
@@ -193,8 +193,12 @@ changed. Good, no suprises. This means we can now focus on CFF spec.
 
 Reading CFF spec reveals that fonts are drawn using a stack-based virtual
 machine, which is documented in the Charstring spec. Googling for "python
-opentype cff" reveals `fonttools` project that we can use to analyze the
-bytecode.
+opentype cff" points to `fonttools` project that we can use to dump the
+bytecode. Doing this in a straightforward manner does not work, because it tries
+to also run the bytecode, which contains a couple fancy unsupported
+instructions, but we can still reuse the lower-level infrastructure and copy
+decompilation parts of higher-level infrastructure into our script, while
+avoiding running the decompiled code.
 
 Let's dump the charstring:
 
@@ -257,7 +261,7 @@ Instructions `0x1-0x18` initialize the transient array (let's call it `t`) with
 `[1, 0, 0, 1, 2, 3]`. We then see a ton of calls to `subr11` (actual subroutine
 numbers are computed by adding a bias - in this case `107`, to `callsubr`
 arguments) - it's their arguments which are encoded as `\x1C\x00\x00-\x03`. So
-the code passes each bit pair to subroutine `11`.
+the code passes each bit pair to `subr11`.
 
 At the end `subr9` is normally called, but if  `t[0] == 41` and `t[1] == 40`,
 then `1` is added to a subroutine number and the code calls `subr8` instead.
@@ -335,7 +339,7 @@ Ditto `t[0]` and `t[1]`.
 ```
 
 Here we call a subroutine with index `t[1] + 16`. Since we know that
-'0 <= t[1] <= 40' we can assume that this would call `subr16` - `subr56`.
+`0 <= t[1] <= 40` we can assume that this would call `subr16` - `subr56`.
 These subroutines check whether `t[0]` belongs to a certain set, and if yes,
 call the dreaded `subr9`. Each of them has a unique associated set, otherwise
 they are all the same. For example:
@@ -393,7 +397,7 @@ This basically means that if `t[1] == 1`, then `t[0]` cannot be one of
 ```
 
 This calls subroutine `t[bitpair + 2] + 12`. Since `t[2:6]` are in range `0-3`,
-this will call `subr12`-`subr15`. They are responsible to incrementing and
+this will call `subr12`-`subr15`. They are responsible for incrementing and
 decrementing `t[0]` and `t[1]`, for example:
 
 ```
@@ -407,7 +411,7 @@ decrementing `t[0]` and `t[1]`, for example:
         [0xa] return
 ```
 
-This increments `t[0]`. Let's finish `subr11`.
+We can see that `subr12` increments `t[0]`. Let's finish `subr11`.
 
 ```
         [0x55] push -50
@@ -415,7 +419,7 @@ This increments `t[0]`. Let's finish `subr11`.
         [0x57] return
 ```
 
-Finally, `subr57` is called.
+At the end it calls `subr57`.
 
 ```
     localSubrs[57]
@@ -465,8 +469,9 @@ let's reuse it to run the whole charstring. Whenever we find ourselves calling
 the following observations. Let's recap that movement happens using
 `t[bitpair + 2] + 12` and `t[2:6]` rotate each turn. The latter circumstance
 does not complicate life, because we simulate everything anyway and thus know
-the current `t` value when we need to make a decision. Computing `bitpair` based
-on direction of the current step and current value of `t` is trivial.
+the current `t` value when we need to make a decision. So the task is to compute
+`bitpair` based on direction of the current step and current value of `t`, and
+this is trivial.
 
 Finally, we need to squash bitpairs into bytes and xor them with magic bytes.
 This reveals the flag!
