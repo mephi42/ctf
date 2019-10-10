@@ -4,7 +4,7 @@ We are given a Python console application exposed via xinetd. It allows us to
 do four things:
 
 * Option `0` (`writeflag`): three times only, write up to 0x30 characters into
-`flag` global variable as well as into a file with a random name.
+`flag` global variable as well as into a new file with a random name.
 * Option `1` (`editflag`): one time only, write 2 bytes into any file in the
 application directory (excluding `.py` files) at any offset.
 * Option `2` (`pushflag`): no-op, commented out.
@@ -95,12 +95,13 @@ https://github.com/python/cpython/blob/v2.7.15/Python/ceval.c#L1021), then we
 are good.
 
 We could increase the chances of it appearing by passing `system` to
-`writeflag` (option `0`), since the pointer will be saved in a global variable,
-which will not be overwritten or garbage collected.
+`writeflag` (option `0`), since the value will be saved into a global variable
+`flag`, which will not be overwritten or garbage collected.
 
 How to find the offset? Let's use gdb and catch the moment when the code calls
 `LOAD_ATTR` inside `printlist`. First, let's add a few things to the
-`Dockerfile` to enable debugging:
+`Dockerfile` to enable debugging (it's important to have the same environment
+as the actual server):
 
 ```
 RUN sed -i -e 's/^# deb-src /deb-src /g' /etc/apt/sources.list
@@ -110,7 +111,8 @@ RUN cd /usr/src && apt-get source python2.7
 ```
 
 Then rebuild the image and run it with `--privileged` flag to enable debugging
-(this is actually an overkill but who cares):
+(this is actually an overkill - something like `--cap-add=SYS_PTRACE
+--security-opt=apparmor:unconfined` might suffice, but it's so much longer):
 
 ```
 $ docker build -t need_some_flags_2 .
@@ -177,13 +179,13 @@ for pp in range(names_arr, names_arr + 0x10000 * 8, 8):
 end
 ```
 
-First we scan through all pointers in the reachable area. If the second quadword
-they point to is address of `PyString_Type`, we assume this is a Python string.
-Then we use gdb to ask the Python interpreter to give us its value, and if it's
-`system`, then we print the address of the corresponding pointer. The last
-manual step is to subtract `%r12 + 0x18` from each printed address (there are
-normally 2 of them) and divide by 8 to get indices. Those two indices are stabl
-across multiple runs.
+First we scan through all pointers in the reachable area. For each pointer, if
+the second quadword it points to is address of `PyString_Type`, we assume this
+is a Python string. Then we use gdb to ask the Python interpreter to give us its
+value, and if it's `system`, then we print the address of the corresponding
+pointer. The last manual step is to subtract `%r12 + 0x18` from each printed
+address (there are normally only 2 of them) and divide by 8 to get indices.
+Those two indices are stable across multiple runs.
 
 So, the final sequence is:
 
