@@ -223,9 +223,10 @@ init killed:     0
 init terminated: 0
 ```
 
-The initialization part went through successfully. Not sure why the `arg == 0`
-branch was not accounted for and we ended up with just one state, but this looks
-promising. Let's run a transaction now.
+The initialization part went through successfully. Not sure why the `arg != 0`
+branch was not accounted for and we ended up with just one state - maybe
+Manticore always passes `0`, but this looks promising. Let's run a transaction
+now.
 
 ```
 symbolic_data = m.make_symbolic_buffer(320, name='symbolic_data')
@@ -293,9 +294,9 @@ the time in `_recv`, which most likely means we wait for the solver to give us
 answers. That's pretty ugly, but maybe we could tune the symbolic execution to
 issue less or smaller queries?
 
-Let's hook into `send` and `_recv` (in [`manticore/core/smtlib/solver.py`](
+Let's hook into `_send` and `_recv` (in [`manticore/core/smtlib/solver.py`](
 https://github.com/trailofbits/manticore/blob/0.3.1/manticore/core/smtlib/solver.py#L280
-)) and see which queries give z3 the hard time:
+)) and see which queries give z3 a hard time:
 
 ```
     def _send(self, cmd: str):
@@ -461,13 +462,19 @@ This one takes 8 seconds, and there are quite a few more like it:
 ```
 
 While longish and repetitive, it does not look too onerous. Giving it to `z3`
-command-like tool results in a similar run time.
+command-like tool results in a similar run time:
+
+```
+$ time -p z3 slow.z3
+sat
+real 8,70
+```
 
 When ending up in an apparent dead-end like this one, googling never hurts, does
 it?
 
-"z3 slow query", first hit: https://github.com/Z3Prover/z3/issues/1602, the
-advice is: use `(check-sat-using smt)`.
+"z3 slow query", on the [first hit](https://github.com/Z3Prover/z3/issues/1602)
+the advice is: use `(check-sat-using smt)`.
 
 ```
 $ time -p z3 slow.z3
