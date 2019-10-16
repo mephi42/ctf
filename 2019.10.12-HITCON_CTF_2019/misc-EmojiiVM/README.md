@@ -1,7 +1,7 @@
 ## Misc - EmojiiVM
 
 See [part 1](
-https://github.com/mephi42/ctf/tree/master/2019.10.12-HITCON_CTF_2019/reverse_EmojiVM
+https://github.com/mephi42/ctf/tree/master/2019.10.12-HITCON_CTF_2019/reverse-EmojiVM
 ) for VM description.
 
 The goal here is to write out a multiplication table. This is a little bit
