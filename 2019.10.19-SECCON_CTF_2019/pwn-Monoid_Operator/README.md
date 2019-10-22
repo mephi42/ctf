@@ -49,17 +49,17 @@ exploitation plan is:
   `x` will make sure that the rest of the buffer - which is a forward pointer
   and a bunch of zeroes from the last time, will stay intact. Wait, isn't that
   just two elements? Yes, but since `x` is not a number, it will be stuck in the
-  `scanf` buffer and will therefore count as 129 numbers and the next operator,
-  which will finally consume it.
+  `scanf` buffer and will therefore count as 129 "empty" numbers and the next
+  operator, which will finally consume it.
 * The result of the second addition is thus a libc pointer, from which we can
   compute gadget and cookie pointers.
 * Send the carefully crafted format string as feedback and get the shell.
 
 A few observations regarding forming the format string:
 
-* We can set a breakpoint at the final `ret` instruction and observe stack and
-  register values. Many of them reliably end with `0x00`, which means we'll be
-  able to use them as zero byte. `%8$c` serves this purpose very nicely.
+* We can set a breakpoint at the `sprintf` call and observe stack and register
+  values. Many of them reliably end with `0x00`, which means we'll be able to
+  use them as zero byte. `%8$c` serves this purpose very nicely.
 * We can use padding modifier to produce multiple characters at once, e.g.
   `%8$1032c` will produce 1031 spaces and a zero.
 * The cookie always starts with `\0`, so `%.8s` would copy just that. We need to
