@@ -52,7 +52,9 @@ deciphered:
 Hey guys! FLAG is SECCON{3n73r3d_fr0m_7h3_p3rf0rm4nc3_p4d_k3yb04rd}
 ```
 
-Of course, turns out it's not necessary to resort to guessing to solve this
-task. One could simply use the brain, read the `midiInOpen` manual, reverse
-engineer the callback that's passed to it, and figure out the logic explained
-above. But why would anyone in their mind do that? /s
+P.S. Of course, [turns out](
+https://tuanlinh.gitbook.io/ctf/seccon-2019-qualification#ppkeyboard
+) it's not necessary to resort to guessing to solve this task. One could simply
+use the brain, read the `midiInOpen` manual, reverse engineer the callback
+that's passed to it, and figure out the logic explained above. But why would
+anyone in their mind do that? /s
