@@ -1,4 +1,4 @@
-## 7w1n5
+## Reversing - 7w1n5
 
 We are given two binaries, both of which print:
 
@@ -12,7 +12,7 @@ and immediately exit. Under `gdb` they also print:
 No no no no no
 ```
 
-and exit anyway.
+and still exit.
 
 Inspection with IDA reveals a soup of encryption calls, environment checks and
 `exec`s. Let's try dynamic analysis first in order to figure out where these two
@@ -40,7 +40,7 @@ do\n
   # base64\343\201\253\343\201\252\343\201\243\343\201\246\343\201\204\343\202\213\n
 done\n
 echo Close! So close! >/dev/null\n",
-"./Brother1"], 0x7fff15d4a798 /* 62 vars */) = 0
+"./Brother1"], /* 62 vars */) = 0
 ```
 
 Ok, it just looks for `gdb` and `r2` in the process list, so we can simply use a
@@ -48,10 +48,10 @@ symlink to trick it. Wait a second, what's this: `SECCON{Which_do_yo`?
 
 ```
 $ strace -f -s 8192 ./Brother2 2>&1 | grep exec
-execve("./Brother2", ["./Brother2"], 0x7fff6f9ea468 /* 62 vars */) = 0
+execve("./Brother2", ["./Brother2"], /* 62 vars */) = 0
 execve("/bin/bash", ["./Brother2", "-c", "exec '/usr/bin/strace' \"$@\"",
-"./Brother2"], 0x555556067d70 /* 63 vars */) = 0
-execve("/usr/bin/strace", ["/usr/bin/strace"], 0x556f002e4fe0 /* 63 vars */) = 0
+"./Brother2"], /* 63 vars */) = 0
+execve("/usr/bin/strace", ["/usr/bin/strace"], /* 63 vars */) = 0
 ```
 
 `argv[0]` trick, how cute.
@@ -71,7 +71,7 @@ do\n
   # base64\343\201\253\343\201\252\343\201\243\343\201\246\343\201\204\343\202\213\n
 done\n
 echo Close! So close! >/dev/null\n",
-"./Brother2"], 0x7fffd9b1d648 /* 62 vars */) = 0
+"./Brother2"], /* 62 vars */) = 0
 ```
 
 Hard to believe, but `SECCON{Which_do_you_like_Bin_or_TxT}` is indeed the flag!
