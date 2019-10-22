@@ -99,7 +99,9 @@ main:
 
 So, the whole action is sequential, despite the number of involved processes.
 Children will create each other recursively, each ultimately hashing the buffer
-2 ** 15 times and saving the correct flag to the disk.
+2 ** 15 times and saving the decrypted flag to the disk, overwriting each
+other's work. Finally, the parent would save its own decrypted version,
+overriding what the last child did. This should be the correct flag.
 
 The bothersome thing is:
 
