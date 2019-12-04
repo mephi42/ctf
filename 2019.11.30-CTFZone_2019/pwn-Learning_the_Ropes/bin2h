@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+import sys
+
+while True:
+    buf = sys.stdin.buffer.read(16)
+    if len(buf) == 0:
+        break
+    print(', '.join(map(lambda x: f'0x{x:02x}', buf)) + ',')
