@@ -1,0 +1,11 @@
+--- ./src/saarlang/ast/ast.cpp.orig	2020-03-21 19:28:14.414541590 +0100
++++ ./src/saarlang/ast/ast.cpp	2020-03-21 19:28:32.886375012 +0100
+@@ -58,6 +58,8 @@
+ 		scope.set(arg->symbol, arg);
+ 	}
+ 	dynamic_cast<StatementNode *>(children.back())->checkType(diag, scope);
++	if (symbol == "main" && arguments.size() != 0)
++	    throw std::exception();
+ 	scope.pop();
+ }
+ 

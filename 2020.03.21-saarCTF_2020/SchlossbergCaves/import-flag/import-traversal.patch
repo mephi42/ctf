@@ -1,0 +1,12 @@
+--- ./src/saarlang/SaarlangModule.cpp.orig	2020-03-21 18:13:24.371941384 +0100
++++ ./src/saarlang/SaarlangModule.cpp	2020-03-21 18:14:14.395409096 +0100
+@@ -90,6 +90,9 @@
+ 	if (it != modules.end())
+ 		return &it->second;
+ 
++    if (filename.find("..") != std::string::npos)
++        throw std::exception();
++
+ 	std::ifstream fileinput(basepath + filename, std::ios::in);
+ 	if (!fileinput.is_open())
+ 		diag.file_error(filename);

@@ -1,0 +1,50 @@
+{
+  "created": 1584825840,
+  "id": "1584825840_1273976215",
+  "name": "PaltryNiece",
+  "owner": "TremendousSteadyHospital7137",
+  "template_id": 2,
+  "treasure_count": 8,
+  "treasures": [
+    {
+      "name": "SAAR{wQBYAAYAAABlj0zybEBzLuGfRnS4KNFJ}",
+      "x": 800,
+      "y": 458
+    },
+    {
+      "name": "bf89ftqgjaZ",
+      "x": 1157,
+      "y": 437
+    },
+    {
+      "name": "iaR1kvqfP2Z",
+      "x": 728,
+      "y": 18
+    },
+    {
+      "name": "Chest of SAAR{wQBYAAYAAQCUXsDd1CTt1FHXy3Xh7ijJ}",
+      "x": 408,
+      "y": 788
+    },
+    {
+      "name": "sjMUg0Xa",
+      "x": 137,
+      "y": 885
+    },
+    {
+      "name": "zixGppoz",
+      "x": 1206,
+      "y": 892
+    },
+    {
+      "name": "o0j4Z3nLFTr",
+      "x": 1117,
+      "y": 160
+    },
+    {
+      "name": "SAAR{wQBYAAYAAgCfOQ7yKDSt_ekfyb1D3Nu4}",
+      "x": 1057,
+      "y": 648
+    }
+  ]
+}

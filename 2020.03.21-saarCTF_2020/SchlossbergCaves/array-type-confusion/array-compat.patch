@@ -1,0 +1,10 @@
+--- ./src/saarlang/ast/ast.h.orig	2020-03-21 22:05:49.453156727 +0100
++++ ./src/saarlang/ast/ast.h	2020-03-21 22:24:08.299968440 +0100
+@@ -236,6 +236,7 @@
+ 	bool isCompatible(const TypeNode *t2) {
+ 		if (isFunction || t2->isFunction) return false;
+ 		if (isArray != t2->isArray) return false;
++		if (isArray && t2->isArray && basicType != t2->basicType) return false;
+ 		if (basicType == TT_INT || basicType == TT_BYTE)
+ 			return t2->basicType == TT_INT || t2->basicType == TT_BYTE;
+ 		return false;
