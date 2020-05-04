@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+import subprocess
+
+bin = open('challenge.bin', 'rb').read()
+with open('challenge.s', 'w') as fp:
+    for b in bin:
+        fp.write(f'.byte 0x{b:02x}\n')
+subprocess.check_call(['avr-gcc', '-o', 'challenge.elf', 'challenge.s'])
