@@ -63,9 +63,9 @@ uint checker16(uchar *input) {
 
 # Attempt 1: angr
 
-This looks simple enough for [angr to solve](angr.py). Indeed, angr cuts through
-most checkers like a hot knife through butter. What gives it pause are nonlinear
-checkers like this one:
+This looks simple enough for [angr to solve](angrit.py). Indeed, angr cuts
+through most checkers like a hot knife through butter. What gives it pause are
+nonlinear checkers like this one:
 
 ```
 uint checker3(uchar *input) {
