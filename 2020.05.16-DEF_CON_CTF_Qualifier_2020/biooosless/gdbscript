@@ -1,0 +1,11 @@
+set pagination off
+target remote localhost:1234
+set architecture i8086
+# skip until protected mode
+while $pc != 0xfffd6
+    si
+end
+set architecture i386
+layout asm
+b *0x7fbd8a4
+c
