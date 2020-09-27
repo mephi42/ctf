@@ -1,0 +1,50 @@
+set pagination off
+file ./secure
+set args <shellcode.stdin
+b alarm
+commands
+  set $rdi = 3600
+  b _sgx_ecall
+  commands
+    p/x $rcx
+    x/a $rcx
+    x/16bx *(long*)$rcx
+    b enclave_entry
+    commands
+      p/x $rsi
+      c
+    end
+    b *(enclave_entry - 0x695e + 0x6720)
+    commands
+      printf "enter_enclave(%p)\n", $rsi
+      c
+    end
+    b *(enclave_entry - 0x695e + 0x1ca0)
+    commands
+      printf "do_ecall(%p)\n", $rsi
+      c
+    end
+    b *(enclave_entry - 0x695e + 0x18c0)
+    commands
+      printf "trts_ecall(%p)\n", $rsi
+      c
+    end
+    b *(enclave_entry - 0x695e + 0x5a0)
+    commands
+      printf "TEH_ECALL(%p)\n", $rdi
+      c
+    end
+    b *(enclave_entry - 0x695e + 0x594)
+    commands
+      printf "JUMP\n"
+      c
+    end
+    b **(long*)$rsp
+    commands
+      printf "_sgx_ecall ret\n"
+    end
+    c
+  end
+  c
+end
+r

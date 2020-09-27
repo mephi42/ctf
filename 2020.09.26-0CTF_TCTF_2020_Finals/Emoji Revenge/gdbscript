@@ -1,0 +1,12 @@
+b alarm
+commands
+  set $rdi = 3600
+  c
+end
+set args <kaboom
+b *(handle_horse + 555)
+commands
+  b *($rdx + 0xb5)
+  c
+end
+r
