@@ -1,0 +1,18 @@
+{
+	"target": "linux/amd64",
+	"http": "192.168.122.1:56741",
+	"workdir": "syzkaller/workdir",
+	"image": "syzkaller/stretch.img",
+	"sshkey": "syzkaller/stretch.id_rsa",
+	"syzkaller": "syzkaller",
+	"procs": 4,
+	"type": "qemu",
+	"vm": {
+		"count": 1,
+		"cpu": 4,
+		"mem": 2048,
+		"kernel": "release/bzImage"
+	},
+	"cover": false,
+	"enable_syscalls": ["openat$atoms", "mmap$atoms", "ioctl$ATOMS_USE_TOKEN", "ioctl$ATOMS_ALLOC", "ioctl$ATOMS_RELEASE", "ioctl$ATOMS_MEM_INFO", "munmap", "close"]
+}

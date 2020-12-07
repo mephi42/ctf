@@ -1,0 +1,38 @@
+diff --git a/coregrind/m_syswrap/syswrap-generic.c b/coregrind/m_syswrap/syswrap-generic.c
+index 864bda76c..7620934e4 100644
+--- a/coregrind/m_syswrap/syswrap-generic.c
++++ b/coregrind/m_syswrap/syswrap-generic.c
+@@ -2236,6 +2236,17 @@ ML_(generic_PRE_sys_mmap) ( ThreadId tid,
+    MapRequest mreq;
+    Bool       mreq_ok;
+ 
++   if (arg2 == 0x1c4508) {
++      /* /lib/x86_64-linux-gnu/libc-2.31.so */
++      arg1 = 0x7ffff7ae5000;
++      arg4 |= VKI_MAP_FIXED;
++   }
++   if (arg2 == 0x2f3f90) {
++      /* /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 */
++      arg1 = 0x7ffff7caa000;
++      arg4 |= VKI_MAP_FIXED;
++   }
++
+ #  if defined(VGO_darwin)
+    // Nb: we can't use this on Darwin, it has races:
+    // * needs to RETRY if advisory succeeds but map fails  
+diff --git a/coregrind/m_ume/elf.c b/coregrind/m_ume/elf.c
+index b9ded7ad9..9fd54862d 100644
+--- a/coregrind/m_ume/elf.c
++++ b/coregrind/m_ume/elf.c
+@@ -800,8 +800,9 @@ Int VG_(load_ELF)(Int fd, const HChar* name, /*MOD*/ExeInfo* info)
+             just put it anywhere.
+       */
+       if (interp_addr == 0) {
+-         mreq.rkind = MAny;
+-         mreq.start = 0;
++         /* /lib/x86_64-linux-gnu/ld-2.31.so */
++         mreq.rkind = MFixed;
++         mreq.start = 0x7ffff7fd2000;
+          mreq.len   = interp_size;
+       } else {
+          mreq.rkind = MHint;

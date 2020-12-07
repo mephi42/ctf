@@ -1,0 +1,21 @@
+resource fd_atoms[fd]
+
+openat$atoms(fd const[AT_FDCWD], file ptr[in, string["/dev/atoms"]], flags flags[open_flags], mode const[0]) fd_atoms
+
+mmap$atoms(addr vma, len len[addr], prot flags[mmap_prot], flags flags[mmap_flags], fd fd_atoms, offset fileoff)
+
+ioctl$ATOMS_USE_TOKEN(fd fd_atoms, cmd const[0x4008d900], arg intptr)
+ioctl$ATOMS_ALLOC(fd fd_atoms, cmd const[0xc010d902], arg ptr[inout, atoms_ioctl_alloc])
+ioctl$ATOMS_RELEASE(fd fd_atoms, cmd const[0xd903])
+ioctl$ATOMS_MEM_INFO(fd fd_atoms, cmd const[0x8018d901], arg ptr[out, atoms_ioctl_info])
+
+atoms_ioctl_alloc {
+	size		int64[0:0x20000, 0x1000]	(in)
+	total_pages	int64	(out)
+}
+
+atoms_ioctl_info {
+	token	int64	(out)
+	n_pages	int64	(out)
+	n_atoms	int64	(out)
+}
