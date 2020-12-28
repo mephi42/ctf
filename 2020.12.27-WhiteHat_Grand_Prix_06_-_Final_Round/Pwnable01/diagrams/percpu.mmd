@@ -1,0 +1,16 @@
+flowchart LR
+    subgraph Pcpu[pcpu_base_addr]
+        PcpuPtr0[core #0]
+        PcpuPtr1[core #1]
+        PcpuPtrN["..."]
+    end
+    subgraph Pcpu0[.data..percpu #0]
+        Pcpu00[irq_stack_union]
+        Pcpu0M["..."]
+        Pcpu0current_task[current_task]
+        Pcpu0N["..."]
+    end
+    Task0[task_struct]
+
+    PcpuPtr0-->Pcpu0
+    Pcpu0current_task-->Task0

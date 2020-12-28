@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e -u -x -o pipefail
+cd "$(dirname "$0")"
+user=$(id -u):$(id -g)
+for diagram in percpu scull; do
+    docker run \
+        --interactive \
+        --rm \
+        --user="$user" \
+        --volume="$PWD:$PWD" \
+        --workdir="$PWD" \
+        minlag/mermaid-cli:8.8.4 \
+        --input="$diagram.mmd" \
+        --output="$diagram.svg" &
+done
+wait

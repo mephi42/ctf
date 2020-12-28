@@ -7,6 +7,7 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* WhiteHat Grand Prix 06 - Final Round: [Pwnable01](2020.12.27-WhiteHat_Grand_Prix_06_-_Final_Round/Pwnable01)
 * 0CTF/TCTF 2020 Finals: [Emoji Revenge](2020.09.26-0CTF_TCTF_2020_Finals/Emoji%20Revenge)
 * 0CTF/TCTF 2020 Finals: [SecureEnv](2020.09.26-0CTF_TCTF_2020_Finals/SecureEnv)
 * De1CTF 2020: [code_runner](2020.05.02-De1CTF_2020/code_runner)

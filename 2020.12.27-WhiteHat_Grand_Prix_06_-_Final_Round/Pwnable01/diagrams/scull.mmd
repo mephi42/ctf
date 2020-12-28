@@ -1,0 +1,33 @@
+flowchart LR
+    subgraph Device[scull_dev]
+        DeviceData[scull_qset *data]
+        DeviceQuantum[int quantum = 32]
+        DeviceQset[int qset = 2]
+    end
+    subgraph Qset0[scull_qset]
+        Qset0Data[void **data]
+        Qset0Next[scull_qset *next]
+    end
+    subgraph QuantumPtrArray0["kmalloc-16 chunk"]
+        QuantumPtr00[void*]
+        QuantumPtr01[void*]
+    end
+    Quantum00[kmalloc-32 chunk]
+    Quantum01[kmalloc-32 chunk]
+    subgraph Qset1[scull_qset]
+        Qset1Data[void **data]
+        Qset1Text[scull_qset *next = NULL]
+    end
+    subgraph QuantumPtrArray1["kmalloc-16 chunk"]
+        QuantumPtr10[NULL]
+        QuantumPtr11[void*]
+    end
+    Quantum11[kmalloc-32 chunk]
+
+    DeviceData-->Qset0
+    Qset0Data-->QuantumPtrArray0
+    Qset0Next-->Qset1
+    QuantumPtr00-->Quantum00
+    QuantumPtr01-->Quantum01
+    Qset1Data-->QuantumPtrArray1
+    QuantumPtr11-->Quantum11
