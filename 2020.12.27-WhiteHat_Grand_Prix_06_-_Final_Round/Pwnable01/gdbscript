@@ -1,0 +1,34 @@
+target remote localhost:1234
+file vmlinux
+set $base=0xffffffffc004e000
+b *($base+0x41f)
+commands
+  printf "kmalloc dptr->data = %p\n", $rax
+  c
+end
+b *($base+0x470)
+commands
+  printf "dptr->data[s_pos] = %p\n", $rax
+  c
+end
+b *($base+0xa5)
+commands
+  printf "free dptr->data[i] = %p\n", $rdi
+  c
+end
+b *($base+0xb9)
+commands
+  printf "free dptr->data = %p\n", $rdi
+  c
+end
+b *($base+0x3cf)
+commands
+  printf "copy_from_user(%p, %p, %p)...\n", $rdi, $rsi, $rdx
+  c
+end
+b *($base+0x3d4)
+commands
+  printf "copy_from_user done\n"
+  c
+end
+c
