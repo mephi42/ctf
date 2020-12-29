@@ -128,10 +128,10 @@ separate device for each one.
 
 ## Privilege escalation
 
-Normally we would strive for `commit_creds(prepare_creds())`, but getting
-PC control might be a hassle here. With arbitrary read/write, I used to do
-`current->cred->uid = 0`, but turns out there is an even easier way with one
-less dereference: `current->cred = &init_cred`.
+Normally we would strive for `commit_creds(prepare_kernel_cred(NULL))`, but
+getting  PC control might be a hassle here. With arbitrary read/write, I used
+to do `current->cred->uid = 0`, but turns out there is an even easier way with
+one less dereference: `current->cred = &init_cred`.
 
 `current` is a per-CPU variable. When writing kernel modules in C, the way
 those  are addressed is hidden behind macros, but here we have to [implement it
