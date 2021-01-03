@@ -1,4 +1,4 @@
-# babyformat - mini writeup
+# babyformat (mini writeup)
 
 * Bug: we can `fprintf()` anything to `/dev/null`. The binary is built without
   `-fPIE` and the format string is read into `.bss`.

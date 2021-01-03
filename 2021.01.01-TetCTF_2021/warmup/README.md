@@ -1,4 +1,4 @@
-# warmup - mini writeup
+# warmup (mini writeup)
 
 * Bug 1: `printf(player_name)`.
 * Bug 2: glibc `TYPE_3` RNG is used with a 3-byte seed. We can just bruteforce

@@ -1,4 +1,4 @@
-# cache_v1 - mini writeup
+# cache_v1 (mini writeup)
 
 * Bug: instead of using `caches[key]`, the code uses `caches[hash(key)]`.
 * libstdc++ hashes strings with MurmurHash. Copy the logic to Python and use z3

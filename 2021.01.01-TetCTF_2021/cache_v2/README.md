@@ -1,4 +1,4 @@
-# cache_v2 - mini writeup
+# cache_v2 (mini writeup)
 
 * Bug: reference count can wrap around, leading to a UAF.
 * Create the large victim cache and duplicate it 256 times. This will set its

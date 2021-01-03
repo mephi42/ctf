@@ -7,6 +7,11 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* TetCTF 2021: [warmup (mini writeup)](2021.01.01-TetCTF_2021/warmup),
+  [babyformat (mini writeup)](2021.01.01-TetCTF_2021/babyformat),
+  [cache_v1 (mini writeup)](2021.01.01-TetCTF_2021/cache_v1),
+  [cache_v2 (mini writeup)](2021.01.01-TetCTF_2021/cache_v2),
+  [SimpleSystem (mini writeup)](2021.01.01-TetCTF_2021/SimpleSystem).
 * WhiteHat Grand Prix 06 - Final Round: [Pwnable01](2020.12.27-WhiteHat_Grand_Prix_06_-_Final_Round/Pwnable01)
 * 0CTF/TCTF 2020 Finals: [Emoji Revenge](2020.09.26-0CTF_TCTF_2020_Finals/Emoji%20Revenge)
 * 0CTF/TCTF 2020 Finals: [SecureEnv](2020.09.26-0CTF_TCTF_2020_Finals/SecureEnv)

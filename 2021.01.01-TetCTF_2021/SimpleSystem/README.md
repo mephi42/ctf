@@ -1,4 +1,4 @@
-# SimpleSystem - mini writeup
+# SimpleSystem (mini writeup)
 
 * Bug: accesses to array of sessions are not synchronized.
 * Create the victim session.
