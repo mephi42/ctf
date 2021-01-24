@@ -265,7 +265,7 @@ check.
 We caught this one in the traffic, but I did not manage to understand how
 exactly it works. It's obfuscated by using weird variable names and injecting
 dead code. Maybe it's actually the fragment of the ppc solution? Anyway,
-shoot-out to the team who made it!
+shout-out to the team who made it!
 
 Needless to say, since we did not understand it, we did not fix it. If it's ppc,
 I'm not even sure whether there can be a fix.

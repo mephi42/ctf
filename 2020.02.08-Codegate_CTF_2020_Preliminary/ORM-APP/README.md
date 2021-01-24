@@ -94,7 +94,7 @@ The following ports are defined:
 
 I think issuing two `mmio start` requests in a row may result in a race related
 to pthread creation in the emulator, but this must be for the second task of the
-series. Shoot-out to PPP, who are the only team who have solved it!
+series. Shout-out to PPP, who are the only team who have solved it!
 
 # Reversing
 
