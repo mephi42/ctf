@@ -7,6 +7,8 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* LINE CTF 2021: [bank (mini writeup)](2021.03.20-LINE_CTF_2021/bank),
+  [pprofile (mini writeup)](2021.03.20-LINE_CTF_2021/pprofile)
 * zer0pts CTF 2021: [nasm_kit (mini writeup)](2021.03.06-zer0pts_CTF_2021/nasm_kit)
 * TetCTF 2021: [warmup (mini writeup)](2021.01.01-TetCTF_2021/warmup),
   [babyformat (mini writeup)](2021.01.01-TetCTF_2021/babyformat),
