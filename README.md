@@ -7,6 +7,9 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* Midnight Sun CTF 2021 Quals: [brohammer (mini writeup)](
+  2021.04.09-Midnight_Sun_CTF_2021_Quals/brohammer), [Flag controller (mini
+  writeup)](2021.04.09-Midnight_Sun_CTF_2021_Quals/Flag%20controller)
 * LINE CTF 2021: [bank (mini writeup)](2021.03.20-LINE_CTF_2021/bank),
   [pprofile (mini writeup)](2021.03.20-LINE_CTF_2021/pprofile)
 * zer0pts CTF 2021: [nasm_kit (mini writeup)](2021.03.06-zer0pts_CTF_2021/nasm_kit)
