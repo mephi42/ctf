@@ -1,0 +1,271 @@
+function dlfree(a:int_ptr) {
+  var c:int_ptr;
+  var e:{ a:int, b:int, c:int }
+  var h:int_ptr;
+  if (eqz(a)) goto out;  /* if (mem != 0) */
+  var b:int = a + -8;  /* mchunkptr p  = mem2chunk(mem); */
+  var d:{ a:int, b:int, c:int, d:int, e:int, f:int, g:int, h:int } =
+    b + (a = (c = (a + -4)[0]:int) & -8);  /* mchunkptr next = chunk_plus_offset(p, psize) */
+  if (c & 1) goto B_b;  /* if (!pinuse(p)) */
+  if (eqz(c & 3)) goto out;  /* ok_inuse(p) */
+  b = b - (c = b[0]:int);
+  if (b < (e = 0[1220]:int)) goto out;  /* ok_address(fm, p) */
+  a = c + a;
+  if (0[1221]:int == b) goto B_c;
+  if (c > 255) goto B_d;
+  var f:int_ptr = b[3]:int;
+  var g:int_ptr = b[2]:int;
+  if (g == (c = ((h = c >> 3) << 3) + 4904)) goto B_e;
+  e > g;
+  label B_e:
+  if (f != g) goto B_f;
+  0[1216]:int = 0[1216]:int & -2 << h;
+  goto B_b;
+  label B_f:
+  if (f == c) goto B_g;
+  e > f;
+  label B_g:
+  f[2] = g;
+  g[3] = f;
+  goto B_b;
+  label B_d:
+  h = b[6]:int;
+  f = b[3]:int;
+  if (f == b) goto B_i;
+  if (e > (c = b[2]:int)) goto B_j;
+  c[3] != b;
+  label B_j:
+  f[2] = c;
+  c[3] = f;
+  goto B_h;
+  label B_i:
+  c = b + 20;
+  e = c[0];
+  if (e) goto B_k;
+  c = b + 16;
+  e = c[0];
+  if (e) goto B_k;
+  f = 0;
+  goto B_h;
+  label B_k:
+  loop L_l {
+    g = c;
+    f = e;
+    c = f + 20;
+    e = c[0];
+    if (e) continue L_l;
+    c = f + 16;
+    e = f[4];
+    if (e) continue L_l;
+  }
+  g[0] = 0;
+  label B_h:
+  if (eqz(h)) goto B_b;
+  e = b[7]:int;
+  c = (e << 2) + 5168;
+  if (c[0] != b) goto B_n;
+  c[0] = f;
+  if (f) goto B_m;
+  0[1217]:int = 0[1217]:int & -2 << e;
+  goto B_b;
+  label B_n:
+  (h + select_if(16, 20, h[4] == b))[0]:int = f;
+  if (eqz(f)) goto B_b;
+  label B_m:
+  f[6] = h;
+  c = b[4]:int;
+  if (eqz(c)) goto B_o;
+  f[4] = c;
+  c[6] = f;
+  label B_o:
+  c = b[5]:int;
+  if (eqz(c)) goto B_b;
+  (f + 20)[0]:int = c;
+  c[6] = f;
+  goto B_b;
+  label B_c:
+  c = d.b;
+  if ((c & 3) == 3) {
+    d.b = c & -2;
+    0[1218]:int = a;
+    (b + a)[0]:int = a;
+    b[1]:int = a | 1;
+    return ;
+  }
+  label B_b:
+  if (d <= b) goto out;  /* ok_next(p, next) */
+  c = d.b;  /* crash.py */
+  if (eqz(c & 1)) goto out;  /* ok_pinuse(next) */
+  if ((c & 2) == 0) {  /* if (!cinuse(next)) { */
+    if (0[1222]:int != d) goto B_r;
+    0[1222]:int = b;
+    0[1219]:int = (a = 0[1219]:int + a);
+    b[1]:int = a | 1;
+    if (b != 0[1221]:int) goto out;
+    0[1218]:int = 0;
+    0[1221]:int = 0;
+    return ;
+    label B_r:
+    if (0[1221]:int != d) goto B_s;
+    0[1221]:int = b;
+    0[1218]:int = (a = 0[1218]:int + a);
+    b[1]:int = a | 1;
+    (b + a)[0]:int = a;
+    return ;
+    label B_s:
+    a = (c & -8) + a;
+    if (c > 255) goto B_u;
+    e = d.d;
+    f = d.c;
+    if (f == (c = ((d = c >> 3) << 3) + 4904)) goto B_v;
+    0[1220]:int > f;
+    label B_v:
+    if (e != f) goto B_w;
+    0[1216]:int = 0[1216]:int & -2 << d;
+    goto B_t;
+    label B_w:
+    if (e == c) goto B_x;
+    0[1220]:int > e;
+    label B_x:
+    e.c = f;
+    f[3] = e;
+    goto B_t;
+    label B_u:
+    h = d.g;
+    f = d.d;
+    if (f == d) goto B_z;
+    if (0[1220]:int > (c = d.c)) goto B_aa;
+    c[3] != d;  # crashes here
+    label B_aa:
+    f[2] = c;
+    c[3] = f;
+    goto B_y;
+    label B_z:
+    c = d + 20;
+    e = c[0];
+    if (e) goto B_ba;
+    c = d + 16;
+    e = c[0];
+    if (e) goto B_ba;
+    f = 0;
+    goto B_y;
+    label B_ba:
+    loop L_ca {
+      g = c;
+      f = e;
+      c = f + 20;
+      e = c[0];
+      if (e) continue L_ca;
+      c = f + 16;
+      e = f[4];
+      if (e) continue L_ca;
+    }
+    g[0] = 0;
+    label B_y:
+    if (eqz(h)) goto B_t;
+    e = d.h;
+    c = (e << 2) + 5168;
+    if (c[0] != d) goto B_ea;
+    c[0] = f;
+    if (f) goto B_da;
+    0[1217]:int = 0[1217]:int & -2 << e;
+    goto B_t;
+    label B_ea:
+    (h + select_if(16, 20, h[4] == d))[0]:int = f;
+    if (eqz(f)) goto B_t;
+    label B_da:
+    f[6] = h;
+    c = d.e;
+    if (eqz(c)) goto B_fa;
+    f[4] = c;
+    c[6] = f;
+    label B_fa:
+    c = d.f;
+    if (eqz(c)) goto B_t;
+    (f + 20)[0]:int = c;
+    c[6] = f;
+    label B_t:
+    (b + a)[0]:int = a;
+    b[1]:int = a | 1;
+    if (b != 0[1221]:int) goto B_p;
+    0[1218]:int = a;
+    return ;
+  }
+  d.b = c & -2;
+  (b + a)[0]:int = a;
+  b[1]:int = a | 1;
+  label B_p:
+  if (a > 255) goto B_ga;
+  c = a >> 3;
+  a = (c << 3) + 4904;
+  e = 0[1216]:int;
+  if (e & (c = 1 << c)) goto B_ia;
+  0[1216]:int = e | c;
+  c = a;
+  goto B_ha;
+  label B_ia:
+  c = a[2];
+  label B_ha:
+  c[3] = b;
+  a[2] = b;
+  b[3]:int = a;
+  b[2]:int = c;
+  return ;
+  label B_ga:
+  c = 0;
+  e = a >> 8;
+  if (eqz(e)) goto B_ja;
+  c = 31;
+  if (a > 16777215) goto B_ja;
+  e = e << (c = e + 1048320 >> 16 & 8);
+  f = e << (e = e + 520192 >> 16 & 4);
+  c = ((f << (f = f + 245760 >> 16 & 2)) >> 15) - ((e | c) | f);
+  c = (c << 1 | (a >> c + 21 & 1)) + 28;
+  label B_ja:
+  b[4]:long@4 = 0L;
+  (b + 28)[0]:int = c;
+  e = (c << 2) + 5168;
+  f = 0[1217]:int;
+  if (f & (d = 1 << c)) goto B_la;
+  e.a = b;
+  0[1217]:int = f | d;
+  (b + 24)[0]:int = e;
+  b[2]:int = b;
+  b[3]:int = b;
+  goto B_ka;
+  label B_la:
+  c = a << select_if(0, 25 - (c >> 1), c == 31);
+  f = e.a;
+  loop L_na {
+    e = f;
+    if ((e.b & -8) == a) goto B_ma;
+    f = c >> 29;
+    c = c << 1;
+    d = e + (f & 4) + 16;
+    f = d.a;
+    if (f) continue L_na;
+  }
+  d.a = b;
+  (b + 24)[0]:int = e;
+  b[3]:int = b;
+  b[2]:int = b;
+  goto B_ka;
+  label B_ma:
+  a = e.c;
+  e.c = b;
+  a[3] = b;
+  (b + 24)[0]:int = 0;
+  b[2]:int = a;
+  b[3]:int = e;
+  label B_ka:
+  0[1224]:int = (b = 0[1224]:int + -1);
+  if (b) goto out;
+  b = 5320;
+  loop L_oa {
+    a = b[0]:int;
+    b = a + 8;
+    if (a) continue L_oa;
+  }
+  0[1224]:int = -1;
+label out:
+}

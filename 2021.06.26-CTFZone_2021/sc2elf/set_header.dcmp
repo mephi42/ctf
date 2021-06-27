@@ -1,0 +1,34 @@
+HEADER_LEN = 1
+B16_PTR = 2
+B16_LEN = 3
+CTX = 262
+RETVAL = 263
+FRAME_SIZE = 1056
+
+function set_header(a:int):int {
+  var frame:int_ptr = sp - FRAME_SIZE;
+  sp = frame;
+  frame[CTX] = a;
+  frame[261] = 0;
+  memset(frame + 16, 0, 1024);
+  printf((1948), (0));
+  var p:int = frame + 16;
+  fgets(p, 1024, 520);
+  frame[B16_LEN] = strlen(p);
+  if (p[frame[B16_LEN] - 1] == '\n')
+    p[frame[B16_LEN] - 1] = 0;
+  frame[B16_PTR] = 0;
+  frame[HEADER_LEN] = base16_decode(p, &frame[B16_PTR]);
+  if (frame[HEADER_LEN] != 84) {
+    printf(1978, 0);
+    frame[RETVAL] = 1;
+    goto out;
+  }
+  (frame[CTX])[0] = frame[HEADER_LEN];
+  memcpy(((frame[CTX])[1]), frame[B16_PTR], ((frame[CTX])[0]));
+  base16_free(&frame[B16_PTR], frame[HEADER_LEN]);
+  frame[RETVAL] = 0;
+label out:
+  sp = frame + FRAME_SIZE;
+  return frame[RETVAL];
+}

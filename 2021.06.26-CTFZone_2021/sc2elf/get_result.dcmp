@@ -1,0 +1,27 @@
+FRAME_SIZE = 16
+
+function get_result(config:int):int {
+  var d:{ a:int, b:int, c:int, d:int } = sp - FRAME_SIZE;
+  sp = d;
+  local_config = config;
+  free(local_config->result_buf);
+  if (local_config->header_buf[0] != 127 ||
+      local_config->header_buf[1] != 69 ||
+      local_config->header_buf[2] != 76 ||
+      local_config->header_buf[3] != 70) {
+    fp = 0;
+    fp = fopen(2040, 2054);
+    fseek(fp, 0, 2);
+    tmpl_len = ftell(fp);
+    local_config->header_len = tmpl_len;
+    fseek(fp, 0, 0);
+    fread(local_config->header_buf, local_config->header_len, 1, fp);
+  }
+  local_config->result_len = local_config->header_len + local_config->shellcode_len;
+  d.a = malloc(local_config->result_len);
+  // UAF?
+  memcpy(local_config->result_buf, local_config->header_buf, local_config->header_len);
+  memcpy(local_config->result_buf + local_config->header_len, local_config->shellcode_buf, local_config->shellcode_len);
+  sp = d + FRAME_SIZE;
+  return (0);
+}

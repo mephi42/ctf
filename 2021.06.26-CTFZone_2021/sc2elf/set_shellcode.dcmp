@@ -1,0 +1,33 @@
+FRAME_SIZE = 1056
+LEN = 1
+BUF = 2
+CONFIG = 262
+RETVAL = 263
+
+function set_shellcode(a:int):int {
+  var frame:int_ptr = sp - FRAME_SIZE;
+  sp = frame;
+  frame[CONFIG] = a;
+  frame[261] = (0);
+  memset(((frame + (16))), (0), (1024));
+  printf((1871), (0));
+  var p:int = frame + 16;
+  fgets(p, (1024), ((0)[520]));
+  frame[3] = (strlen(p));
+  if (p[frame[3] - 1] == '\n')
+    p[frame[3] - 1] == '\n' = 0;
+  frame[BUF] = 0;
+  frame[LEN] = base16_decode(p, &frame[BUF]);
+  if (frame[LEN] == 0) {
+    printf(1904, 0);
+    frame[RETVAL] = 1;
+    goto out;
+  }
+  frame[CONFIG]->shellcode_len = frame[LEN];
+  memcpy(frame[CONFIG]->shellcode_buf, frame[BUF], frame[CONFIG]->shellcode_len);
+  base16_free(&frame[BUF], frame[LEN]);
+  frame[RETVAL] = (0);
+label out:
+  sp = frame + FRAME_SIZE;
+  return (frame[RETVAL]);
+}

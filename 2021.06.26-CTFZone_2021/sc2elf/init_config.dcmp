@@ -1,0 +1,16 @@
+FRAME_SIZE = 16
+CONFIG = 3
+
+function init_config(a:int) {
+  var frame:int_ptr = sp - FRAME_SIZE;
+  sp = frame;
+  frame[CONFIG] = a;
+  frame[CONFIG]->header_len = 84;
+  frame[CONFIG]->header_buf = malloc(frame[CONFIG]->header_len);
+  memset(frame[CONFIG]->header_buf, 0, frame[CONFIG]->header_len);
+  frame[CONFIG]->shellcode_len = 160;
+  frame[CONFIG]->shellcode_buf = malloc(frame[CONFIG]->shellcode_len);
+  frame[CONFIG]->result_len = frame[CONFIG]->header_len + frame[CONFIG]->shellcode_len;
+  frame[CONFIG]->result_buf = malloc(frame[CONFIG]->result_len);
+  sp = frame + FRAME_SIZE;
+}

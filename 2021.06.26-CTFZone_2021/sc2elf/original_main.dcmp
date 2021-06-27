@@ -1,0 +1,39 @@
+CONFIG = 4
+FRAME_SIZE = 48
+
+function original_main():int {
+  var frame:int = sp - FRAME_SIZE;
+  sp = frame;
+  frame[11]:int = (0);
+  init_config(&frame[CONFIG]);
+  print_description();
+  loop L_a {
+    var j:long_ptr = frame;
+    print_menu();
+    ((long *)j)[0] = 0;
+    ((long *)j)[1] = 0;
+    fgets(j, 16, 520);
+    if (frame[0] == '1') {
+      set_shellcode(&frame[CONFIG]);
+      base16_print(1024, frame[7], frame[6]);
+    }
+    if (frame[0] == '2') {
+      set_header(&frame[CONFIG]);
+      base16_print(1036, frame[5], frame[4]);
+    }
+    if (frame[0] == '3') {
+      get_result(&frame[CONFIG]);
+      base16_print(1045, frame[9], frame[8]);
+    }
+    if (frame[0] == '4')
+      print_description();
+    if (frame[0] == '5') {
+      printf(1054, 0);
+      break;
+    }
+    continue L_a;
+  }
+  free_config(&frame[CONFIG]);
+  sp = frame + FRAME_SIZE;
+  return (0);
+}
