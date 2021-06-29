@@ -7,6 +7,7 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* CTFZone 2021: [sc2elf](2021.06.26-CTFZone_2021/sc2elf)
 * Midnight Sun CTF 2021 Quals: [brohammer (mini writeup)](
   2021.04.09-Midnight_Sun_CTF_2021_Quals/brohammer), [Flag controller (mini
   writeup)](2021.04.09-Midnight_Sun_CTF_2021_Quals/Flag%20controller)
