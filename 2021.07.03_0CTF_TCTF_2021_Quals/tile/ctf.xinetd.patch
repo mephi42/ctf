@@ -1,0 +1,11 @@
+--- a/ctf.xinetd	2021-07-03 05:50:39.000000000 +0200
++++ b/ctf.xinetd	2021-07-03 22:39:03.000000000 +0200
+@@ -10,7 +10,7 @@
+     bind        = 0.0.0.0
+     server      = /usr/bin/qemu-tilegx
+     # replace helloworld to your program
+-    server_args = -L /home/ctf/ /home/ctf/httpd /home/ctf/html
++    server_args = -L /home/ctf/ -d in_asm,cpu -D /tmp/qemu.log -singlestep -strace /home/ctf/httpd /home/ctf/html
+     banner_fail = /etc/banner_fail
+     # safety options
+     per_source	= 10 # the maximum instances of this service per source IP address

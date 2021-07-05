@@ -1,0 +1,54 @@
+From 8d673be9b80e8801761780aaeb3cf0318c468107 Mon Sep 17 00:00:00 2001
+From: mephi42 <mephi42@gmail.com>
+Date: Sat, 3 Jul 2021 18:00:16 +0200
+Subject: [PATCH] tilegx
+
+---
+ qemu_mode/build_qemu_support.sh |  1 +
+ qemu_mode/patches/tilegx.diff   | 22 ++++++++++++++++++++++
+ 2 files changed, 23 insertions(+)
+ create mode 100644 qemu_mode/patches/tilegx.diff
+
+diff --git a/qemu_mode/build_qemu_support.sh b/qemu_mode/build_qemu_support.sh
+index a7bfe20d..d2035e26 100755
+--- a/qemu_mode/build_qemu_support.sh
++++ b/qemu_mode/build_qemu_support.sh
+@@ -194,6 +194,7 @@ patch -p1 <../patches/translator.diff || exit 1
+ patch -p1 <../patches/__init__.py.diff || exit 1
+ patch -p1 <../patches/make_strncpy_safe.diff || exit 1
+ patch -p1 <../patches/mmap_fixes.diff || exit 1
++patch -p1 <../patches/tilegx.diff || exit 1
+ 
+ echo "[+] Patching done."
+ 
+diff --git a/qemu_mode/patches/tilegx.diff b/qemu_mode/patches/tilegx.diff
+new file mode 100644
+index 00000000..29117ac1
+--- /dev/null
++++ b/qemu_mode/patches/tilegx.diff
+@@ -0,0 +1,22 @@
++--- a/target/tilegx/translate.c	2021-07-03 17:54:19.707308495 +0200
+++++ b/target/tilegx/translate.c	2021-07-03 17:59:11.952710312 +0200
++@@ -27,6 +27,7 @@
++ #include "tcg-op.h"
++ #include "exec/cpu_ldst.h"
++ #include "linux-user/syscall_defs.h"
+++#include "../../../patches/afl-qemu-common.h"
++ 
++ #include "opcode_tilegx.h"
++ #include "spr_def_64.h"
++@@ -2407,6 +2408,11 @@
++         tcg_gen_insn_start(dc->pc);
++         num_insns++;
++ 
+++        if (dc->pc == afl_entry_point) {
+++            afl_setup();
+++            gen_helper_afl_entry_routine(cpu_env);
+++        }
+++
++         translate_one_bundle(dc, cpu_ldq_data(env, dc->pc));
++ 
++         if (dc->exit_tb) {
+-- 
+2.25.1
+
