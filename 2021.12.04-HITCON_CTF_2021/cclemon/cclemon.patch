@@ -1,0 +1,157 @@
+diff --git a/src/machine.c b/src/machine.c
+index c6b8d54..25c9e36 100644
+--- a/src/machine.c
++++ b/src/machine.c
+@@ -104,7 +104,7 @@ machine_add_code1(struct lemon *lemon, int value)
+ 		size = sizeof(unsigned char) * machine->codelen * 2;
+ 		machine->code = allocator_realloc(lemon, machine->code, size);
+ 		if (!machine->code) {
+-			return 0;
++			return -1;
+ 		}
+ 
+ 		machine->codelen *= 2;
+@@ -1278,6 +1278,11 @@ lemon_machine_execute_loop(struct lemon *lemon)
+ 		CHECK_PAUSE(lemon->l_nil);
+ 	}
+ 	while (!machine->halt && machine->pc < machine->maxpc) {
++#if 0
++		if (machine->pc == 313) {
++			printf("s(%s, %s)\n", lstring_to_cstr(lemon, lobject_string(lemon, lframe_get_item(lemon, machine_peek_frame(lemon), 0))), lstring_to_cstr(lemon, lobject_string(lemon, lframe_get_item(lemon, machine_peek_frame(lemon), 1))));
++		}
++#endif
+ 		opcode = machine->code[machine->pc++];
+ 
+ 		switch (opcode) {
+@@ -2344,3 +2349,90 @@ machine_disassemble(struct lemon *lemon)
+ 		}
+ 	}
+ }
++
++void
++machine_load(struct lemon *lemon, const char *path)
++{
++	struct machine *machine;
++	struct lobject *cpool;
++	unsigned char *buf;
++	unsigned char *p;
++	char cpool_type;
++	int cpool_count;
++	int cpool_idx;
++	long linteger;
++	size_t count;
++	size_t len;
++	long size;
++	FILE *f;
++	int ret;
++	int i;
++
++	f = fopen(path, "r");
++	assert(f != NULL);
++	ret = fseek(f, 0, SEEK_END);
++	assert(ret == 0);
++	size = ftell(f);
++	assert(size >= 0);
++	ret = fseek(f, 0, SEEK_SET);
++	assert(ret == 0);
++	buf = allocator_alloc(lemon, size);
++	assert(buf != NULL);
++	count = fread(buf, 1, size, f);
++	assert(count == (size_t)size);
++	fclose(f);
++
++	machine_reset(lemon);
++	machine = lemon->l_machine;
++	p = buf;
++	machine->maxpc = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
++	p += 4;
++	for (i = 0; i < machine->maxpc; i++, p++) {
++		ret = machine_add_code1(lemon, *p);
++		assert(ret >= 0);
++	}
++	cpool_count = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
++	p += 4;
++	for (i = 0; i < cpool_count; i++) {
++		cpool_idx = *p;
++		p++;
++		cpool_type = *p;
++		p++;
++		switch (cpool_type) {
++			case 'I':
++				linteger = ((unsigned long)p[0] << 56) |
++						((unsigned long)p[1] << 48) |
++						((unsigned long)p[2] << 40) |
++						((unsigned long)p[3] << 32) |
++						((unsigned long)p[4] << 24) |
++						((unsigned long)p[5] << 16) |
++						((unsigned long)p[6] << 8) |
++						(unsigned long)p[7];
++				p += 8;
++				cpool = linteger_create_from_long(lemon, linteger);
++				break;
++			case 'M':
++				len = strlen((char *)p);
++				cpool = lmodule_create(lemon, lstring_create(lemon, (char *)p, len));
++				p += len + 1;
++				break;
++			case 'F':
++				len = strlen((char *)p);
++				cpool = lstring_create(lemon, (char *)p, len);
++				p += len + 1;
++				break;
++			case 'S':
++				len = strlen((char *)p);
++				cpool = lstring_create(lemon, (char *)p, len);
++				p += len + 1;
++				break;
++			default:
++				assert(0);
++				break;
++		}
++		if (machine->cpool[cpool_idx] == NULL) {
++			machine->cpool[cpool_idx] = cpool;
++		}
++	}
++	allocator_free(lemon, buf);
++}
+diff --git a/src/machine.h b/src/machine.h
+index 9f1c8e6..1424187 100644
+--- a/src/machine.h
++++ b/src/machine.h
+@@ -103,4 +103,7 @@ machine_throw(struct lemon *lemon,
+ void
+ machine_disassemble(struct lemon *lemon);
+ 
++void
++machine_load(struct lemon *lemon, const char *path);
++
+ #endif /* LEMON_VM_H */
+diff --git a/src/shell.c b/src/shell.c
+index 10e3056..12688df 100644
+--- a/src/shell.c
++++ b/src/shell.c
+@@ -239,7 +239,15 @@ shell(struct lemon *lemon)
+ 		if (strcmp(buffer, "\\exit\n") == 0) {
+ 			break;
+ 		}
+-
++		if (memcmp(buffer, "\\load ", 6) == 0) {
++			buffer[strlen(buffer) - 1] = '\0';
++			machine_load(lemon, buffer + 6);
++			continue;
++		}
++		if (strcmp(buffer, "\\run\n") == 0) {
++			pc = 0;
++			goto run;
++		}
+ 		/* copy buffer to stmt for error recovery */
+ 		memcpy(stmt + stmtlen, buffer, strlen(buffer));
+ 		stmtlen += strlen(buffer);
+@@ -276,6 +284,7 @@ shell(struct lemon *lemon)
+ 		lemon_machine_reset(lemon);
+ 		generator_emit(lemon);
+ 		lemon->l_generator = generator_create(lemon);
++run:
+ 		lemon_machine_set_pc(lemon, pc);
+ 		if (lemon_machine_get_fp(lemon) >= 0) {
+ 			frame = lemon_machine_get_frame(lemon, 0);
