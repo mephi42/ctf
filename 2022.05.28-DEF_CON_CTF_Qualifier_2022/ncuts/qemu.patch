@@ -1,0 +1,49 @@
+diff --git a/disas.c b/disas.c
+index b2753e1902..82b4dfbb82 100644
+--- a/disas.c
++++ b/disas.c
+@@ -219,6 +219,7 @@ void target_disas(FILE *out, CPUState *cpu, target_ulong code,
+     s.info.buffer_length = size;
+ 
+     if (s.info.cap_arch >= 0 && cap_disas_target(&s.info, code, size)) {
++        fprintf(out, "0x" TARGET_FMT_lx ":\n", code + size);
+         return;
+     }
+ 
+@@ -240,6 +241,7 @@ void target_disas(FILE *out, CPUState *cpu, target_ulong code,
+             break;
+         }
+     }
++    fprintf(out, "0x" TARGET_FMT_lx ":\n", pc);
+ }
+ 
+ static int plugin_printf(FILE *stream, const char *fmt, ...)
+diff --git a/roms/edk2 b/roms/edk2
+--- a/roms/edk2
++++ b/roms/edk2
+@@ -1 +1 @@
+-Subproject commit b24306f15daa2ff8510b06702114724b33895d3c
++Subproject commit b24306f15daa2ff8510b06702114724b33895d3c-dirty
+diff --git a/target/sh4/translate.c b/target/sh4/translate.c
+index f1b190e7cf..e73a5c25bd 100644
+--- a/target/sh4/translate.c
++++ b/target/sh4/translate.c
+@@ -171,15 +171,15 @@ void superh_cpu_dump_state(CPUState *cs, FILE *f, int flags)
+     qemu_fprintf(f, "sgr=0x%08x dbr=0x%08x delayed_pc=0x%08x fpul=0x%08x\n",
+                  env->sgr, env->dbr, env->delayed_pc, env->fpul);
+     for (i = 0; i < 24; i += 4) {
+-        qemu_printf("r%d=0x%08x r%d=0x%08x r%d=0x%08x r%d=0x%08x\n",
++        qemu_fprintf(f,"r%d=0x%08x r%d=0x%08x r%d=0x%08x r%d=0x%08x\n",
+ 		    i, env->gregs[i], i + 1, env->gregs[i + 1],
+ 		    i + 2, env->gregs[i + 2], i + 3, env->gregs[i + 3]);
+     }
+     if (env->flags & DELAY_SLOT) {
+-        qemu_printf("in delay slot (delayed_pc=0x%08x)\n",
++        qemu_fprintf(f,"in delay slot (delayed_pc=0x%08x)\n",
+ 		    env->delayed_pc);
+     } else if (env->flags & DELAY_SLOT_CONDITIONAL) {
+-        qemu_printf("in conditional delay slot (delayed_pc=0x%08x)\n",
++        qemu_fprintf(f,"in conditional delay slot (delayed_pc=0x%08x)\n",
+ 		    env->delayed_pc);
+     } else if (env->flags & DELAY_SLOT_RTE) {
+         qemu_fprintf(f, "in rte delay slot (delayed_pc=0x%08x)\n",
