@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Build the challenge - development script.
+
+set -e -u -x
+make -f docker-image/Makefile.qemu "$@"
+[ -d buildroot ] || git clone --branch=2022.05 https://git.busybox.net/buildroot
+cd buildroot
+cp ../docker-image/buildroot-2022.05/.config .
+for x in ../docker-image/buildroot-2022.05/*; do
+    ln -fs "$x" .
+done
+make olddefconfig "$@"
+make "$@"

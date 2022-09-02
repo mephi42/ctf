@@ -1,0 +1,17 @@
+.PHONY: all
+all: qemu-7.0.0/build/config.status
+	cd qemu-7.0.0 && $(MAKE)
+
+.PHONY: install
+install: qemu-7.0.0/build/config.status
+	cd qemu-7.0.0 && $(MAKE) install DESTDIR=/qemu-7.0.0
+
+qemu-7.0.0.tar.xz:
+	wget https://download.qemu.org/qemu-7.0.0.tar.xz
+
+qemu-7.0.0/configure: qemu-7.0.0.tar.xz
+	tar xJf qemu-7.0.0.tar.xz
+	touch qemu-7.0.0/configure
+
+qemu-7.0.0/build/config.status: qemu-7.0.0/configure
+	cd qemu-7.0.0 && ./configure --target-list=s390x-softmmu --without-default-features

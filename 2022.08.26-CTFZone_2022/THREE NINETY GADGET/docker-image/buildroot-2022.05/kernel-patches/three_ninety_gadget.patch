@@ -1,0 +1,81 @@
+diff --git a/arch/s390/kernel/syscall.c b/arch/s390/kernel/syscall.c
+index dc2355c623d6..1a4d57a32afd 100644
+--- a/arch/s390/kernel/syscall.c
++++ b/arch/s390/kernel/syscall.c
+@@ -103,6 +103,64 @@ SYSCALL_DEFINE1(s390_personality, unsigned int, personality)
+ 	return ret;
+ }
+ 
++SYSCALL_DEFINE1(s390_gadget, unsigned long, pc)
++{
++	register unsigned long r14 asm("14") = pc;
++	asm volatile("xgr %%r0,%%r0\n"
++		     "xgr %%r1,%%r1\n"
++		     "xgr %%r2,%%r2\n"
++		     "xgr %%r3,%%r3\n"
++		     "xgr %%r4,%%r4\n"
++		     "xgr %%r5,%%r5\n"
++		     "xgr %%r6,%%r6\n"
++		     "xgr %%r7,%%r7\n"
++		     "xgr %%r8,%%r8\n"
++		     "xgr %%r9,%%r9\n"
++		     "xgr %%r10,%%r10\n"
++		     "xgr %%r11,%%r11\n"
++		     "xgr %%r12,%%r12\n"
++		     "xgr %%r13,%%r13\n"
++		     "xgr %%r15,%%r15\n"
++		     ".machine push\n"
++		     ".machine z13\n"
++		     "vzero %%v0\n"
++		     "vzero %%v1\n"
++		     "vzero %%v2\n"
++		     "vzero %%v3\n"
++		     "vzero %%v4\n"
++		     "vzero %%v5\n"
++		     "vzero %%v6\n"
++		     "vzero %%v7\n"
++		     "vzero %%v8\n"
++		     "vzero %%v9\n"
++		     "vzero %%v10\n"
++		     "vzero %%v11\n"
++		     "vzero %%v12\n"
++		     "vzero %%v13\n"
++		     "vzero %%v14\n"
++		     "vzero %%v15\n"
++		     "vzero %%v16\n"
++		     "vzero %%v17\n"
++		     "vzero %%v18\n"
++		     "vzero %%v19\n"
++		     "vzero %%v20\n"
++		     "vzero %%v21\n"
++		     "vzero %%v22\n"
++		     "vzero %%v23\n"
++		     "vzero %%v24\n"
++		     "vzero %%v25\n"
++		     "vzero %%v26\n"
++		     "vzero %%v27\n"
++		     "vzero %%v28\n"
++		     "vzero %%v29\n"
++		     "vzero %%v30\n"
++		     "vzero %%v31\n"
++		     ".machine pop\n"
++		     "br %0"
++		     : : "r" (r14));
++	unreachable();
++}
++
+ SYSCALL_DEFINE0(ni_syscall)
+ {
+ 	return -ENOSYS;
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 799147658dee..1d24cd86fabd 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -395,6 +395,7 @@
+ 385  common	pkey_alloc		sys_pkey_alloc			sys_pkey_alloc
+ 386  common	pkey_free		sys_pkey_free			sys_pkey_free
+ # room for arch specific syscalls
++390	64	s390_gadget		sys_s390_gadget			-
+ 392	64	semtimedop		sys_semtimedop			-
+ 393  common	semget			sys_semget			sys_semget
+ 394  common	semctl			sys_semctl			compat_sys_semctl

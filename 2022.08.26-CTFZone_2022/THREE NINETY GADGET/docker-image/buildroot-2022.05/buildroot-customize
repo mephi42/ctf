@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e -u -x
+
+# Autologin user, disable swap.
+sed -i \
+    -e 's!^console::respawn:.*!console::respawn:/bin/cttyhack /bin/login -f user!g' \
+    -e '\!^::sysinit:/sbin/swapon!d' \
+    -e '\!^::shutdown:/sbin/swapoff!d' \
+    "$1"/etc/inittab
+
+# Protect the flag.
+chmod 400 "$1"/flag

@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e -u -x
+exec qemu-system-s390x \
+        -m 128M \
+        -smp 2 \
+        -kernel bzImage \
+        -nographic \
+        -drive file=rootfs.ext2,format=raw \
+        -append "root=/dev/vda" \
+        -monitor none \
+        "$@"

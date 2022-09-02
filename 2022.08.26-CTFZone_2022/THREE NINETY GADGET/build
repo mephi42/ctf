@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Build the challenge.
+# Usage: ./build IMAGE FLAG
+
+set -e -u -x
+tmpdir=$(mktemp -d)
+trap 'rm -r $tmpdir' EXIT
+cd "$(dirname "$0")"/docker-image
+docker build . --target=buildroot-2022.05-for-participants --iidfile="$tmpdir/iidfile"
+docker build . --build-arg=flag="$2" --tag="$1"
+cd ..
+iid=$(cat "$tmpdir/iidfile")
+docker create --cidfile="$tmpdir/cidfile" "$iid"
+cid=$(cat "$tmpdir/cidfile")
+trap 'docker rm "$cid"' EXIT
+docker cp "$cid:/tmp/buildroot-2022.05/output/images/bzImage" .
+cp docker-image/run .
+cp docker-image/buildroot-2022.05/kernel-patches/three_ninety_gadget.patch .
+docker cp "$cid:/tmp/buildroot-2022.05/output/images/rootfs.ext2" .
+tar -czf three_ninety_gadget.tar.gz bzImage run three_ninety_gadget.patch rootfs.ext2 README.md
+set +x
+echo
+echo "Build done!"
+echo
+echo "Flag: $2"
+echo "Give this to participants: three_ninety_gadget.tar.gz"
+echo "Deploy this Docker image: $1"
+echo
