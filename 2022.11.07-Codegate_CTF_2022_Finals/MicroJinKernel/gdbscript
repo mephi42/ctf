@@ -1,0 +1,29 @@
+set pagination off
+set args <shellcode.bin
+handle SIGALRM nopass
+b do_alloc
+commands
+  printf "fd=%d size=%d\n", $rdi, $rsi
+  c
+end
+b *(do_alloc+194)
+commands
+  printf "struct buf=%p\n", $rax
+  c
+end
+b *(do_alloc+340)
+commands
+  printf "buf=%p\n", $rax
+  c
+end
+b do_copy_from_guest
+commands
+  printf "token=0x%lx offset=%d size=%d guest_buf=0x%lx\n", $rsi, $rdx, $rcx, $r8
+  c
+end
+b do_copy_to_guest
+commands
+  printf "token=0x%lx offset=%d size=%d guest_buf=0x%lx\n", $rsi, $rdx, $rcx, $r8
+  c
+end
+b exit

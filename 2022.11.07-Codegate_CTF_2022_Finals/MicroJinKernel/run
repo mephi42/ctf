@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e -u -x
+cd "$(dirname "$0")"
+make fmt
+make
+LD_LIBRARY_PATH=for_user ./for_user/microjinkernel <shellcode.bin
