@@ -1,0 +1,42 @@
+b *0xFFFFFFFF8130192A
+commands
+  printf "seq_operations=%p\n", $rax
+  c
+end
+
+set $modules=0xFFFFFFFF827181A0
+set $note2=*(long*)$modules
+x/s $note2 + 16
+set $note2_init=*(long*)($note2 + 0x148)
+set $note2_base=$note2_init-0x450
+p/x $note2_base
+b *($note2_base + 0x2d0)
+commands
+  printf "IO_ADD node=%p\n", $rax
+  c
+end
+b *($note2_base + 0x301)
+commands
+  printf "IO_ADD data size=%ld\n", $rdi
+  c
+end
+b *($note2_base + 0x306)
+commands
+  printf "IO_ADD data=%p\n", $rax
+  c
+end
+b *($note2_base + 0x1e3)
+commands
+  printf "IO_DEL data=%p\n", $rdi
+  c
+end
+b *($note2_base + 0x1f4)
+commands
+  printf "IO_DEL node=%p\n", $rdi
+  c
+end
+
+# edit after copy_from_user
+# b *($note2_base + 0x107)
+
+set $table = $note2_base + 0x2580
