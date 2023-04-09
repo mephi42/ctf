@@ -1,0 +1,16 @@
+nc sentinel-revenge.balsnctf.com 10101
+BALSN{l4y1n6_l0w_5eek1ng_0u7_7he_upp3r_pl4c3s_wh3r3_7h3_in0d3_tr4nsp0s3}
+secret > 100
+instanceId : 499f4e1609de40e1a5aa7f5a40082b52 (keep this for future reference)
+
+stat flag
+  File: flag
+  Size: 75        	Blocks: 8          IO Block: 4096   regular file
+Device: 3fh/63d	Inode: 258431      Links: 2
+Access: (0777/-rwxrwxrwx)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2022-09-03 07:30:03.025131833 +0000
+Modify: 2022-09-03 07:22:40.015867145 +0000
+Change: 2022-09-03 07:31:18.573119394 +0000
+ Birth: 2022-09-03 07:22:40.015867145 +0000
+^^^
+got flag, mb doing this was important?!
