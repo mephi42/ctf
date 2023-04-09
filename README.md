@@ -7,6 +7,11 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* Hack-A-Sat 4 Qualifiers:
+  [Contact (mini writeup)](2023.04.01-Hack-A-Sat_4_Qualifiers/Contact),
+  [dROP Baby (mini writeup)](2023.04.01-Hack-A-Sat_4_Qualifiers/dROP%20Baby),
+  [Magic Space Bussin (mini writeup)](2023.04.01-Hack-A-Sat_4_Qualifiers/Magic%20Space%20Bussin),
+  [Spectrel Imaging (mini writeup)](2023.04.01-Hack-A-Sat_4_Qualifiers/Spectrel%20Imaging).
 * 0CTF/TCTF 2021 Quals: [tile](2021.07.03_0CTF_TCTF_2021_Quals/tile)
 * CTFZone 2021: [sc2elf](2021.06.26-CTFZone_2021/sc2elf)
 * Midnight Sun CTF 2021 Quals: [brohammer (mini writeup)](

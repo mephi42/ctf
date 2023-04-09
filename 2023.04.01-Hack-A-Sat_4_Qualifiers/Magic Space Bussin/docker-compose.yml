@@ -1,0 +1,19 @@
+---
+services:
+  main:
+    build:
+      context: "./image"
+      args:
+        ubuntu_version: 20.04
+        libc_version: 2.31-0ubuntu9.9
+    volumes:
+      - "$PWD:$PWD"
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+    environment:
+      - DISPLAY
+      - NO_AT_BRIDGE=1
+      - PWNLIB_NOTERM=1
+      - PYTHONIOENCODING=utf-8
+    working_dir: $PWD
+    init: true
+    command: sleep inf
