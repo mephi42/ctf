@@ -7,6 +7,11 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* Midnight Sun CTF 2023 Quals:
+  [runeme (mini writeup)](2023.04.08-Midnight_Sun_CTF_2023_Quals/runeme),
+  [SCAAS (mini writeup)](2023.04.08-Midnight_Sun_CTF_2023_Quals/SCAAS),
+  [SPD D (mini writeup)](2023.04.08-Midnight_Sun_CTF_2023_Quals/SPD%20D),
+  [traz (mini writeup)](2023.04.08-Midnight_Sun_CTF_2023_Quals/traz).
 * Hack-A-Sat 4 Qualifiers:
   [Contact (mini writeup)](2023.04.01-Hack-A-Sat_4_Qualifiers/Contact),
   [dROP Baby (mini writeup)](2023.04.01-Hack-A-Sat_4_Qualifiers/dROP%20Baby),
