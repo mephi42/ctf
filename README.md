@@ -7,6 +7,8 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* Codegate CTF 2023 Preliminary:
+  [CST (mini writeup)](2023.06.17-Codegate_CTF_2023_Preliminary/CST).
 * Midnight Sun CTF 2023 Quals:
   [runeme (mini writeup)](2023.04.08-Midnight_Sun_CTF_2023_Quals/runeme),
   [SCAAS (mini writeup)](2023.04.08-Midnight_Sun_CTF_2023_Quals/SCAAS),
