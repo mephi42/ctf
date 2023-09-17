@@ -1,0 +1,5 @@
+file ukqmemo/release/vmlinux.dbg
+target remote :1234
+# mod_tree.addr_min
+set $modbase=*(long *)0xffffffff81a07998
+add-symbol-file ukqmemo/bin/guest/kmemo.ko $modbase

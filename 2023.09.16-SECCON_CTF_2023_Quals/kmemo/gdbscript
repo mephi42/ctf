@@ -1,0 +1,12 @@
+file ../umemo/ukqmemo/release/vmlinux.dbg
+target remote 172.22.0.2:1234
+# mod_tree.addr_min
+set $modbase=*(long *)((char *)&mod_tree + 0x18)
+add-symbol-file ../umemo/ukqmemo/bin/guest/kmemo.ko $modbase
+
+b *(mmap_fault+(0x670-0x620))
+commands
+  set $page = $rax
+  watch *(int *)($page + 0x34)
+  continue
+end

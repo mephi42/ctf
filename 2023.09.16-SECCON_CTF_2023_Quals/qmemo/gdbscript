@@ -1,0 +1,6 @@
+target remote 172.22.0.2:1234
+set $vmlinux = 0xffffffff8b000000
+add-symbol-file ../umemo/ukqmemo/release/vmlinux.dbg -s .text $vmlinux -s .data $vmlinux+0xa00000
+# mod_tree.addr_min
+set $modbase=*(long *)((char *)&mod_tree + 0x18)
+add-symbol-file ../umemo/ukqmemo/bin/guest/kmemo.ko $modbase
