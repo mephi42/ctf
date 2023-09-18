@@ -7,7 +7,8 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
-* SECCON CTF 2023 Quals: [selfcet](2023.09.16-SECCON_CTF_2023_Quals/selfcet).
+* SECCON CTF 2023 Quals: [selfcet](2023.09.16-SECCON_CTF_2023_Quals/selfcet),
+  [umemo](2023.09.16-SECCON_CTF_2023_Quals/umemo).
 * Codegate CTF 2023 Preliminary:
   [CST (mini writeup)](2023.06.17-Codegate_CTF_2023_Preliminary/CST).
 * Midnight Sun CTF 2023 Quals:
