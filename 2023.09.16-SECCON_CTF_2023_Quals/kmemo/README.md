@@ -78,7 +78,7 @@ New value = 1
     new_page=new_page@entry=0x0) at /data/yutaro/CTF/misc/Playground/kernel/modules/memo/memo.c:55
 ```
 
-So we have a user-after-free.
+So we have a use-after-free.
 
 ## kmemo page tables
 
