@@ -100,7 +100,7 @@ struct memo {
 };
 ```
 
-* The lowest 12 bits of an address are ignored.
+* The lowest 12 bits of an offset are ignored.
 * The next 9 bits are used for the second hierarchy level.
 * The next 9 bits are used for the first hierarchy level,
 * The other bits are ignored - this was the vulnerability for the umemo
@@ -139,11 +139,12 @@ https://elixir.bootlin.com/linux/v6.2.8/source/include/linux/mm.h#L1864) →
 https://elixir.bootlin.com/linux/v6.2.8/source/include/linux/mm.h#L115) →
 [`__va()`](
 https://elixir.bootlin.com/linux/v6.2.8/source/arch/x86/include/asm/page.h#L59
-). Phew, that was a lot. At the end `__va()` will simply add [`PAGE_OFFSET`](
+). Phew, that was a lot. At the end `__va()` will add [`PAGE_OFFSET`](
 https://elixir.bootlin.com/linux/v6.2.8/source/arch/x86/include/asm/page_types.h#L30
-) to the page's physical address, which is an alias for [`page_offset_base`](
+), which is an alias for [`page_offset_base`](
 https://elixir.bootlin.com/linux/v6.2.8/source/arch/x86/include/asm/page_64.h#L17
-). The latter is set by [`kernel_randomize_memory()`](
+), to the page's physical address. The latter is set by
+[`kernel_randomize_memory()`](
 https://elixir.bootlin.com/linux/v6.2.8/source/arch/x86/mm/kaslr.c#L43) with a
 huge granularity of a PUD (1G).
 
