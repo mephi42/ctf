@@ -139,8 +139,8 @@ BAD_CHARS = b"\x03\x04\x0a\x11\x13\x7f"
 This means we have to restart the app until ASLR gives us an address without
 any of them. An easy fix, by the way, would be to use the `VLNEXT` aka `0x16`
 aka `026` control character, which escapes the next character after it.
-Unfortunately it's recognized only when `IEXTEN` is set. This can be confirmed
-by getting the shell in the local setup and running:
+Unfortunately it's recognized only when `IEXTEN` is set, and it's not. This can
+be confirmed by getting the shell in the local setup and running:
 
 ```
 $ stty -a
