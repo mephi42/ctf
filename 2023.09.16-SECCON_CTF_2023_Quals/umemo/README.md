@@ -137,10 +137,20 @@ BAD_CHARS = b"\x03\x04\x0a\x11\x13\x7f"
 ```
 
 This means we have to restart the app until ASLR gives us an address without
-any of them.
+any of them. An easy fix, by the way, would be to use the `VLNEXT` aka `0x16`
+aka `026` control character, which escapes the next character after it.
+Unfortunately it's recognized only when `IEXTEN` is set. This can be confirmed
+by getting the shell in the local setup and running:
+
+```
+$ stty -a
+[...]
+isig icanon -iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho -extproc
+```
 
 Back to `0x4`, it's `ef_cxa`, which we need for our exploitation. So we need to
-find existing writable memory, which contains:
+find an existing writable memory region, which contains:
 
 ```
 04 .. .. .. .. .. .. ..
@@ -149,10 +159,24 @@ find existing writable memory, which contains:
 ```
 
 and fill the blanks with the `struct exit_function_list` contents. I ended up
-eyeballing the `.data` and `.bss` sections and found such a location.
+eyeballing the `.data` and `.bss` sections and found such a location relatively
+quickly.
 
 Finally, the initial `__exit_funcs` value is `&initial`, which is inside libc,
 so a partial overwrite works for it as well.
+
+## Debugging
+
+The challenge runs in a VM with quite a primitive userspace. The debugger is
+not available and building one is a hassle. How to debug crashes and eyeball
+section contents?
+
+I used the [initramfs-wrap](https://github.com/mephi42/initramfs-wrap/) script,
+which adds a Debian root that contains GDB (and anything else one can wish for)
+and moves the original contents into a chroot. It allowed me to run the
+challenge in one tmux tab and GDB in the other. It was also possible to run
+GDB on the host and connect it to the gdbserver in the guest, since the guest
+kernel was compiled with network support.
 
 ## Flag
 
