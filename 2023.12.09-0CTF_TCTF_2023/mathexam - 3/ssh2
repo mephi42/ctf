@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e -u -x
+basedir=$(dirname "$0")
+sshpass -p x5kdkwjr8exi2bf70y8g80bggd2nuepf ssh -o ProxyCommand="\"$basedir\"/ssh1 %h %p" -o IdentitiesOnly=yes ctf@third "$@"
+
+# $ while read -r line; do echo $line; done <flag3
+#################################################################################
+###
+### This is the third flag:
+###
+### flag{18235fd6bc592672d848735ae41dd413}
+###
+### How much code do you write for solving the three levels?
+### Actually, using only pure bash shell script is enough to archieve the goal!
+### Have a try!
+### Connect to fourth server by `ssh ctf@fourth` from here with same password.
+###
+#################################################################################

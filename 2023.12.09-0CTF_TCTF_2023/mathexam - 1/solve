@@ -1,0 +1,2 @@
+I promise to play fairly and not to cheat. In case of violation, I voluntarily accept punishment
+a[$(cat flag1 >&2)]+42

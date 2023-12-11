@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e -u -x
+sshpass -p x5kdkwjr8exi2bf70y8g80bggd2nuepf ssh -o IdentitiesOnly=yes -p 2222 ctf@localhost
+
+################################################################################
+##
+## This is the second flag:
+##
+## flag{09bfa84ff226317e3feb6fd8db6c67c2}
+##
+## And the third flag is in another server.
+## You can connect it by `ssh ctf@third` from this server using same password.
+##
+################################################################################

@@ -1,0 +1,3 @@
+#!/bin/sh
+set -e -u -x
+sshpass -p x5kdkwjr8exi2bf70y8g80bggd2nuepf ssh -o IdentitiesOnly=yes -p 2222 ctf@localhost bash -c "\"exec 3<>/dev/tcp/$1/$2; cat <&3 & cat >&3\""

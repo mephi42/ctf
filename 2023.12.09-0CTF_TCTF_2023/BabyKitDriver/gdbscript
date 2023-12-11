@@ -1,0 +1,49 @@
+file kernel
+
+target remote :1234
+
+# Assuming we are here:
+# (gdb) x/i $pc
+# => 0xffffff80183b6fc6:	cli
+set $abs_cli = 0xFFFFFF80004DAFC6
+set $vm_kernel_slide=*(long *)($pc+0xcf57aa)
+printf "$vm_kernel_slide=%p\n", $vm_kernel_slide
+set $dark_matter=0xdc000
+
+python
+import re
+with open("load.log") as fp:
+    for line in fp:
+        m = re.search("(0x[0-9a-f]+) .+ keen.BabyKitDriver", line)
+        if m is not None:
+            gdb.execute("set $base=$vm_kernel_slide+" + m.group(1))
+            gdb.execute("add-symbol-file BabyKitDriver.kext/Contents/MacOS/BabyKitDriver $base")
+            break
+    else:
+        raise RuntimeError("No keen.BabyKitDriver in load.log")
+end
+
+# BabyKitDriverUserClient::baby_leaveMessage
+# b *($base+0x1510)
+# c
+
+set $abs_gadget = 0xFFFFFF800035200A
+set $gadget = $pc - $abs_cli + $abs_gadget
+x/2i $gadget
+b *$gadget
+
+set $abs_gadget = 0xFFFFFF8000525C27
+set $gadget = $pc - $abs_cli + $abs_gadget
+x/2i $gadget
+b *$gadget
+
+set $abs_gadget = 0xFFFFFF80004B017C
+set $gadget = $pc - $abs_cli + $abs_gadget
+x/2i $gadget
+b *$gadget
+
+define hook-stop
+  x/2i $pc
+end
+
+c
