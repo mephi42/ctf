@@ -108,7 +108,7 @@ run `fs0:/efi/boot/bootx64.efi` manually.
 It should be possible to build the exploit natively, but I preferred to use the
 host as much as possible, so I used the `crazymax/osxcross:13.1-ubuntu` docker
 image with the cross-compilers and the SDK. Somewhat counter-intuitively, the
-images comes only with the cross-toolchain and nothing else. So I had to create
+image comes only with the cross-toolchain and nothing else. So I had to create
 a [`Dockerfile`](image/Dockerfile) that added the base system.
 
 ### Testing

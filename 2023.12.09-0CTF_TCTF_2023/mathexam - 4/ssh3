@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e -u -x
+basedir=$(dirname "$0")
+script=$(cat "$basedir"/script)
+../"mathexam - 3"/ssh2 bash -c ${script@Q}

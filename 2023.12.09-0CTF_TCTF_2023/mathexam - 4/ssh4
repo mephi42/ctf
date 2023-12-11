@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e -u -x
+basedir=$(dirname "$0")
+# sshpass -p x5kdkwjr8exi2bf70y8g80bggd2nuepf
+ssh -o ProxyCommand="\"$basedir\"/ssh3 %h %p" -o IdentitiesOnly=yes ctf@fourth "$@"
+
+# function cat() { while true; do LC_ALL=C IFS= read -rd "" -n1 c; if [ -z "$c" ]; then printf "\x00"; else echo -n "$c"; fi; done }
+# cat <flag4
+
+################################################################################
+##
+## This is the forth flag:
+##
+## flag{e3ff16ebbffa9ae42377b29fd23abfe4}
+##
+################################################################################

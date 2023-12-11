@@ -1,0 +1,1 @@
+function cat() { while true; do LC_ALL=C IFS= read -rd "" -n1 c; if [ -z "$c" ]; then printf "\x00"; else echo -n "$c"; fi; done } && exec 3<>/dev/tcp/fourth/22 && (cat <&3 & cat >&3)
