@@ -54,7 +54,7 @@ get its output back.
 * Breakpoints work reliably. Single-stepping is only possible with `stepi`.
   Other commands, like `nexti`, more often than not, cause gdb to lose control.
   When using `si`, disable interrupts by clearing IF using
-  `set $eflags=$eflags&~0x200`, and set if back before `continue`.
+  `set $eflags=$eflags&~0x200`, and set it back before `continue`.
 * The kernel module allows reading and writing a buffer, which is stored in the
   following format:
   ```
@@ -201,8 +201,8 @@ kern_return_t BabyKitDriverUserClient::baby_read(void *ref, IOExternalMethodArgu
 kern_return_t BabyKitDriverUserClient::baby_leaveMessage(void *ref, IOExternalMethodArguments *args) {
   BabyKitDriver *drv;
   kern_return_t ret;
-  __int64 is_v2;
   size_t size;
+  bool is_v2;
 
   drv = (BabyKitDriver *)getProvider();
   is_v2 = args->scalarInput[0];
@@ -218,12 +218,12 @@ kern_return_t BabyKitDriverUserClient::baby_leaveMessage(void *ref, IOExternalMe
     drv->message->v2.output = output2;
     size = args->scalarInput[2];
     if ((int64_t)size > 0x200)
-      size = 0x200LL;
+      size = 0x200;
     drv->message->v2.size = size;
     ret = copyin(args->scalarInput[1], &drv->message->v2.buf, size);
   } else {
     drv->message->v1.output = output1;
-    ret = copyin(args->scalarInput[1], &drv->message->v1.buf, 0x100uLL);
+    ret = copyin(args->scalarInput[1], &drv->message->v1.buf, 0x100);
   }
   drv->is_v2 = is_v2;
   return ret;
@@ -332,8 +332,8 @@ https://github.com/apple-oss-distributions/xnu/blob/xnu-8796.101.5/bsd/kern/kern
 ).
 
 One difficulty is that `proc_update_label()` takes a closure as an argument.
-For the purpose of making one in the exploit, a closure is just an array of
-3 pointers, the last one being a function pointer.
+For the purpose of making one in the exploit, a closure is just an [array of
+3 pointers](pwnit.c#L131) the last one being a function pointer.
 
 With that, we can safely set all kinds of uids to 0.
 
