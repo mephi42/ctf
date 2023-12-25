@@ -1,0 +1,75 @@
+set pagination off
+# vbox is a buggy mess
+handle SIGTRAP nostop noprint
+target remote :1234
+
+# Assuming we are here:
+# (gdb) x/i $pc
+# => 0xfffff8028340e37f:	ret
+set $slide = $pc - 0x14040E37F
+set $ntoskrnl = $slide + 0x140000000
+printf "$ntoskrnl = %p\n", $ntoskrnl
+x/2c $ntoskrnl
+python
+import struct
+slide = int(gdb.parse_and_eval("$slide"))
+PsLoadedModuleList = slide + 0x140C130C0
+sizeof_UNICODE_STRING = 0x10
+offsetof_KLDR_DATA_TABLE_ENTRY_Prev = 0x8
+offsetof_KLDR_DATA_TABLE_ENTRY_DllBase = 0x30
+offsetof_KLDR_DATA_TABLE_ENTRY_BaseDllName = 0x58
+entry = int(gdb.parse_and_eval("*(void **)" + hex(PsLoadedModuleList + offsetof_KLDR_DATA_TABLE_ENTRY_Prev)))
+while entry != PsLoadedModuleList:
+    BaseDllNameLength, _, _, BaseDllNameBuffer = struct.unpack("<HHIQ", gdb.selected_inferior().read_memory(entry + offsetof_KLDR_DATA_TABLE_ENTRY_BaseDllName, sizeof_UNICODE_STRING))
+    BaseDllName = bytes(gdb.selected_inferior().read_memory(BaseDllNameBuffer, BaseDllNameLength)).decode("utf-16")
+    print(hex(entry) + " " + BaseDllName)
+    if BaseDllName == "WkNote.sys":
+        gdb.execute("set $WkNote = *(void **)" + hex(entry + offsetof_KLDR_DATA_TABLE_ENTRY_DllBase))
+        break
+    entry = int(gdb.parse_and_eval("*(void **)" + hex(entry + offsetof_KLDR_DATA_TABLE_ENTRY_Prev)))
+else:
+    raise RuntimeError("WkNote.sys not found")
+end
+printf "$WkNote = %p\n", $WkNote
+b *($WkNote + 0x1068)
+commands
+  printf "Free NOTE_ENT.Buf %p\n", $rcx
+  c
+end
+b *($WkNote + 0x1080)
+commands
+  printf "Free NOTE_ROOT %p\n", $rcx
+  c
+end
+b *($WkNote + 0x1103)
+commands
+  set $arg = $edx
+  c
+end
+b *($WkNote + 0x1109)
+commands
+  printf "Alloc NOTE_ROOT = %p [%d]\n", $rax, $arg
+  c
+end
+b *($WkNote + 0x1263)
+commands
+  printf "Free NOTE_ENT.Buf %p\n", $rcx
+  c
+end
+b *($WkNote + 0x12a9)
+commands
+  set $arg = $edx
+  c
+end
+b *($WkNote + 0x12af)
+commands
+  printf "Alloc NOTE_ENT.Buf = %p [%d]\n", $rax, $arg
+  c
+end
+b *($WkNote + 0x13c0)
+commands
+  printf "WkNoteRead Buf = %p\n", $rcx
+  c
+end
+
+c

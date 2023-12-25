@@ -7,6 +7,8 @@ Chicken](https://ctftime.org/team/1005) since 2019.
 
 # Writeups
 
+* SECCON CTF 2023 International Finals: [WkNote (mini writeup)](
+  2023.12.23-SECCON_CTF_2023_International_Finals/WkNote).
 * 0CTF/TCTF 2023: [BabyKitDriver](2023.12.09-0CTF_TCTF_2023/BabyKitDriver).
 * SECCON CTF 2023 Quals: [selfcet](2023.09.16-SECCON_CTF_2023_Quals/selfcet),
   [umemo](2023.09.16-SECCON_CTF_2023_Quals/umemo),
