@@ -1,0 +1,14 @@
+file dist/vmlinux.dbg
+target remote :1234
+# mod_tree.addr_min
+# set $modbase=*(long *)((char *)&mod_tree + 0x18)
+# add-symbol-file dist/initramfs/usr/lib/modules/i_am_definitely_not_backdoor.ko.dbg $modbase
+set $slot=0xFFFF880000010000+12*8
+set $stage1=0x400000
+set $stage2=0xc00000
+b vunmap
+commands
+  tbreak *$stage2
+  c
+end
+c
