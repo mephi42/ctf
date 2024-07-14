@@ -1,0 +1,44 @@
+diff --git a/fasterbox/build_image.dockerfile b/fasterbox/build_image.dockerfile
+index 7e1bc46..7d27153 100644
+--- a/fasterbox/build_image.dockerfile
++++ b/fasterbox/build_image.dockerfile
+@@ -41,7 +41,10 @@ COPY --from=build /build/chal /root/
+ COPY flag /root/
+ COPY chal.service chal.target /usr/lib/systemd/system/
+ COPY chal.sh /root/
++RUN chmod u+x /root/chal.sh
+ RUN chown root:root /root/chal /root/chal.sh
++RUN echo root:password | chpasswd
++RUN systemctl enable getty@ttyS0
+ 
+ FROM ubuntu:24.04 as image_creator
+ ARG DEBIAN_FRONTEND=noninteractive
+diff --git a/fasterbox/run_qemu.sh b/fasterbox/run_qemu.sh
+old mode 100644
+new mode 100755
+index fddbe9d..909d8a4
+--- a/fasterbox/run_qemu.sh
++++ b/fasterbox/run_qemu.sh
+@@ -18,6 +18,11 @@ CID=0
+ while [ "$CID" -lt 3 ]; do
+   CID=$SRANDOM
+ done
++cat >connect_qemu.sh <<HERE
++#!/bin/bash
++exec socat stdio vsock-connect:${CID}:9000,retry=20,interval=0.2
++HERE
++chmod a+x connect_qemu.sh
+ qemu-system-x86_64 \
+   -m 8G \
+   -enable-kvm \
+@@ -26,8 +31,5 @@ qemu-system-x86_64 \
+   -no-reboot \
+   -device vhost-vsock-pci,guest-cid=${CID} \
+   -drive file=./rootfs.img,format=raw,if=virtio,readonly=on \
+-  -append "console=ttyS0 root=/dev/vda systemd.unit=chal.target panic=1" \
+-  -nographic </dev/null  >&2 >/dev/null &
+-
+-# Redirect the input to the VM
+-socat stdio vsock-connect:${CID}:9000,retry=20,interval=0.2
++  -append "console=ttyS0 root=/dev/vda" \
++  -nographic
