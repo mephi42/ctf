@@ -1,0 +1,20 @@
+services:
+  main:
+    build:
+      context: ./image
+      args:
+        arch: amd64
+        distro: ubuntu:24.04@sha256:8a37d68f4f73ebf3d4efafbcf66379bf3728902a8038616808f04e34a9ab63ee
+        libc_version: 2.39-0ubuntu8.2
+    volumes:
+    - $PWD:$PWD
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+    - DISPLAY
+    - NO_AT_BRIDGE=1
+    - PWNLIB_NOTERM=1
+    - PYTHONIOENCODING=utf-8
+    - LC_ALL=C.UTF-8
+    working_dir: $PWD
+    init: true
+    command: sleep inf
