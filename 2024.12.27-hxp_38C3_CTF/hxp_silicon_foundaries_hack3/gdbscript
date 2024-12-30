@@ -1,0 +1,56 @@
+set pagination off
+target remote :1234
+
+# CheckSevFeatures
+# WORK_AREA_GUEST_TYPE@0x808000
+# SEV_ES_WORK_AREA_STATUS_MSR@0x808004
+# SEV_ES_WORK_AREA_ENC_MASK@0x808014
+b *0xfffffbe9
+commands
+  set $nosev0 = *(long *)0x808000
+  set $nosev1 = *(long *)0x808008
+  set $nosev2 = *(long *)0x808010
+  set $nosev3 = *(long *)0x808018
+  continue
+end
+define nosev
+  set *(long *)0x808000 = $nosev0
+  set *(long *)0x808008 = $nosev1
+  set *(long *)0x808010 = $nosev2
+  set *(long *)0x808018 = $nosev3
+end
+
+# SevExit
+b *0xfffffc82
+commands
+  set $sev0 = *(long *)0x808000
+  set $sev1 = *(long *)0x808008
+  set $sev2 = *(long *)0x808010
+  set $sev3 = *(long *)0x808018
+  nosev
+  continue
+end
+define sev
+  set *(long *)0x808000 = $sev0
+  set *(long *)0x808008 = $sev1
+  set *(long *)0x808010 = $sev2
+  set *(long *)0x808018 = $sev3
+end
+
+# QemuFwCfgProbe before QemuFwCfgIsCcGuest
+b *0x836278
+commands
+  sev
+  continue
+end
+# QemuFwCfgProbe after QemuFwCfgIsCcGuest
+b *0x83627e
+commands
+  nosev
+  continue
+end
+
+# Switch4Level32
+b *0xef65306
+
+continue
