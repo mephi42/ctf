@@ -1,0 +1,13 @@
+/buildroot/
+/deactivate
+/execve_monitor
+/execve_monitor.skel.h
+/.idea/
+/qemu-9.2.2.tar.xz
+/qemu-9.2.2/
+/.vscode/
+*.id0
+*.id1
+*.id2
+*.nam
+*.til

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Build the challenge - development script.
+
+set -e -u -x
+
+make -f docker-image/Makefile.qemu -j"$(nproc)"
+
+if [ ! -d buildroot ];then
+    git clone --branch=2025.02 --depth=1 https://git.busybox.net/buildroot
+fi
+cd buildroot
+cp ../docker-image/buildroot-2025.02/.config .
+for x in ../docker-image/buildroot-2025.02/*; do
+    ln -fs "$x" .
+done
+make olddefconfig "$@"
+make \
+    host-bpftool \
+    toolchain \
+    BPFTOOL_VERSION=v7.5.0 \
+    BR_NO_CHECK_HASH_FOR=bpftool-v7.5.0-git4.tar.gz \
+    "$@"
+CC=$PWD/output/host/bin/x86_64-buildroot-linux-musl-gcc
+
+(cd ../docker-image/deactivate && make CC="$CC" O=../.. -j"$(nproc)")
+(cd ../docker-image/monitor && make CC="$CC" O=../.. -j"$(nproc)")
+mv ../deactivate ../execve_monitor buildroot-fs/bin/
+make BR_NO_CHECK_HASH_FOR=linux-6.13.11.tar.xz "$@"
+
+cp flag output/images/

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Build the challenge.
+# Usage: ./build IMAGE
+
+set -e -u -x
+cd "$(dirname "$0")"/docker-image
+docker build . --tag="$1"
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+mkdir "$tmpdir/capybattle"
+docker run -i --rm "$1" tar -C /challenge -c . | tar -C "$tmpdir/capybattle" -x
+tar -C "$tmpdir" -czf "$PWD/../capybattle-for-organizers.tar.gz" .
+mkdir "$tmpdir/capybattle/src"
+tar -c $(git ls-files) | tar -C "$tmpdir/capybattle/src" -x
+cp ../flag "$tmpdir/capybattle"
+cp ../flag "$tmpdir/capybattle/src"
+tar -C "$tmpdir" -czf "$PWD/../capybattle-for-participants.tar.gz" .
+
+set +x
+echo
+echo "Build done!"
+echo
+echo "Give this to participants: capybattle-for-participants.tar.gz"
+echo "Deploy this Docker image: $1 or this file: capybattle-for-organizers.tar.gz"
+echo

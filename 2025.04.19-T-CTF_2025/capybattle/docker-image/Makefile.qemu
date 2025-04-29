@@ -1,0 +1,23 @@
+.PHONY: all
+all: qemu-9.2.2/build/config.status
+	cd qemu-9.2.2 && $(MAKE)
+
+.PHONY: install
+install: qemu-9.2.2/build/config.status
+	cd qemu-9.2.2 && $(MAKE) install DESTDIR=/qemu-9.2.2
+
+qemu-9.2.2.tar.xz:
+	wget https://download.qemu.org/qemu-9.2.2.tar.xz
+
+qemu-9.2.2/configure: qemu-9.2.2.tar.xz
+	tar xJf qemu-9.2.2.tar.xz
+	touch qemu-9.2.2/configure
+
+qemu-9.2.2/build/config.status: qemu-9.2.2/configure
+	cd qemu-9.2.2 && ./configure \
+	    --enable-attr \
+	    --enable-slirp \
+	    --enable-kvm \
+	    --enable-virtfs \
+	    --target-list=x86_64-softmmu \
+	    --without-default-features

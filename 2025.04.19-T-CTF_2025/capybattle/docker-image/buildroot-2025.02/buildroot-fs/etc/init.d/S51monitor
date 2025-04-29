@@ -1,0 +1,55 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          execve_monitor
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start execve monitoring service
+# Description:       Starts the execve monitoring service that tracks
+#                    process execution using eBPF.
+### END INIT INFO
+
+start() {
+    printf "Starting execve monitor: "
+    # Mount required filesystems
+    mount -t debugfs debugfs /sys/kernel/debug
+    mount -t tracefs tracefs /sys/kernel/debug/tracing
+    # Start the monitor as unprivileged user
+    # https://unix.stackexchange.com/questions/196483
+    capsh \
+        --keep=1 \
+        --user=nobody \
+        --caps=cap_bpf,cap_sys_resource,cap_perfmon+eip \
+        --addamb=cap_bpf,cap_sys_resource,cap_perfmon \
+        --shell=/bin/execve_monitor \
+        -+ >/var/log/execve_monitor.log 2>&1 &
+    echo "OK"
+}
+
+stop() {
+    printf "Stopping execve monitor: "
+    killall execve_monitor
+    # Unmount filesystems
+    umount /sys/kernel/debug/tracing
+    umount /sys/kernel/debug
+    echo "OK"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|reload)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?

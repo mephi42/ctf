@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e -u -x
+exec qemu-system-x86_64 \
+        -m 128M \
+        -kernel bzImage \
+        -initrd rootfs.cpio.zst \
+        -nographic \
+        -monitor none \
+        -accel kvm \
+        -fsdev local,id=host0,path=.,security_model=none,readonly=on \
+        -device virtio-9p-pci,fsdev=host0,mount_tag=host \
+        -netdev user,id=net0 \
+        -device virtio-net-pci,netdev=net0 \
+        -append "console=ttyS0 quiet root=/dev/vda" \
+        "$@"
