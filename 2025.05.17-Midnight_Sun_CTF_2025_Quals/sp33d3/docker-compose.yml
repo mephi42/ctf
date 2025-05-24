@@ -1,0 +1,21 @@
+services:
+  main:
+    build:
+      context: ./image
+      args:
+        arch: amd64
+        distro: ubuntu:24.04
+        libc_version: '2.39-0ubuntu8.4'
+    volumes:
+    - $PWD:$PWD
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+    - DISPLAY
+    - NO_AT_BRIDGE=1
+    - PWNLIB_NOTERM=1
+    - PYTHONIOENCODING=utf-8
+    - LC_ALL=C.UTF-8
+    working_dir: $PWD
+    init: true
+    command: sleep inf
+    privileged: true
