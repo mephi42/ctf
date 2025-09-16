@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e -u -x
+cd "$(dirname "$0")"
+if [ ! -d buildroot ]; then
+	git clone https://github.com/buildroot/buildroot.git --branch=2025.05.1 --depth=1
+fi
+cd buildroot
+if [ ! -e linux-defconfig ]; then
+	ln -s ../linux-defconfig .
+fi
+if [ ! -e buildroot-users ]; then
+	ln -s ../buildroot-users .
+fi
+if [ ! -e 0001-bpf-fix-headlen-type-in-skb-load-helpers.patch ]; then
+	ln -s ../0001-bpf-fix-headlen-type-in-skb-load-helpers.patch .
+fi
+if [ ! -e buildroot-fs ]; then
+	ln -s ../buildroot-fs .
+fi
+if [ ! -e busybox-config ]; then
+	ln -s ../busybox-config .
+fi
+if [ ! -e .config ]; then
+	cp ../buildroot-defconfig .config
+	make olddefconfig
+fi
+make
+cd ..
+cp buildroot/output/images/bzImage ../give/
+cp buildroot/output/images/rootfs.cpio.zst ../give/
+echo 'alfa{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}' | ./flag2cpio >>../give/rootfs.cpio.zst
+cp ../give/bzImage ../deploy/emobpf/
+cp ../give/rootfs.cpio.zst ../deploy/emobpf/rootfs.cpio.zst.orig
+cp --dereference run ../give

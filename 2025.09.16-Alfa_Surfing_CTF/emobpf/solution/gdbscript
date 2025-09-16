@@ -1,0 +1,4 @@
+target remote :1234
+set $cli = 0xffffffff8142d963
+set $slide = $pc - $cli
+symbol-file -o $slide ../dev/buildroot/output/build/linux-6.16.3/vmlinux

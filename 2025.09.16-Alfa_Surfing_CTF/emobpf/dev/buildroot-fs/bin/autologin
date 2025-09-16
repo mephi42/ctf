@@ -1,0 +1,2 @@
+#!/bin/sh
+exec cttyhack login -f ctf

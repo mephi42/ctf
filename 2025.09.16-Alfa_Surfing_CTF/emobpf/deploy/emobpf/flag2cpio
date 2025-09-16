@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e -u -x
+workdir=$(mktemp -d)
+trap 'rm -r "$workdir"' EXIT
+mkdir "$workdir/fs"
+chmod 755 "$workdir/fs"
+mkdir "$workdir/fs/root"
+chmod 755 "$workdir/fs/root"
+cat >"$workdir/fs/root/flag"
+chmod 600 "$workdir/fs/root/flag"
+(cd "$workdir/fs" && find . -print0 | cpio --null --create --format=newc --owner=+0:+0 | zstd)
