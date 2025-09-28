@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package koth;
+
+message SubmitInput {
+  uint32 x = 1;
+  uint32 y = 2;
+  uint32 coins = 3; // 0-10 enforced in code
+}
+
+message CancelInput {
+  uint32 x = 1;
+  uint32 y = 2;
+}
+
+enum ChatChannel {
+  ALL = 0;
+  EVENT = 1;
+  TEAM = 2;
+}
+
+message ChatInput {
+  ChatChannel channel = 1;
+  string message = 2;
+}
+
+message AuthInput {
+  string token = 1;
+}
+
+message ResizeBoardInput {
+  uint32 width = 1;
+  uint32 height = 2;
+}
+
+message ResetBoardStateInput {}
+message OverrideTickDurationInput {
+  float duration = 1;
+}
+
+message Inputs {
+  oneof kind {
+    SubmitInput submit = 1;
+    CancelInput cancel = 2;
+    ChatInput chat = 3;
+    AuthInput auth = 4;
+    // Client requests a tick snapshot to be sent immediately
+    RequestTickInput request_tick = 5;
+    ResizeBoardInput resize_board = 6;
+    ResetBoardStateInput reset_board_state = 7;
+    OverrideTickDurationInput override_tick_duration = 8;
+  }
+}
+
+message TickOutput {
+  uint64 tick_number = 1;
+  uint64 tick_timestamp = 2;
+  bytes pixel_state = 3; // flattened
+  uint32 board_width = 4;
+  uint32 board_height = 5;
+  uint64 next_tick = 6;
+  repeated string team_names = 7;
+  repeated uint32 team_coins = 8;
+  repeated uint32 team_points = 9;
+  repeated uint32 pixel_bids = 10; // flattened bids per pixel
+}
+
+message RequestTickInput {}
+
+
